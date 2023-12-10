@@ -25,10 +25,11 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721URIStorageUpgrad
         _grantRole(UPGRADER_ROLE, upgrader);
     }
 
-    function safeMint(address to, string memory uri) public onlyRole(MINTER_ROLE) {
+    function safeMint(address to, string memory uri) public onlyRole(MINTER_ROLE) returns (uint256){
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
+        return tokenId;
     }
 
     function _authorizeUpgrade(address newImplementation)
