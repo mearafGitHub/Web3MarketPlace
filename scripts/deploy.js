@@ -13,9 +13,9 @@ async function main() {
   await proxyIBLOXXToken.deployed; 
   console.log("IBLOXXToken deployed to:", proxyIBLOXXToken.address); 
 
-  const mintTx = await proxyIBLOXXToken.safeMint(initialOwner, "https://app.infura.io/");  // sample uri, TODO: change later
+  const mintTx = await proxyIBLOXXToken.safeMint(defaultAdmin, "https://app.infura.io/");  // sample uri, TODO: change later
   await mintTx.wait(); 
-  console.log(`NFT minted to address ${initialOwner}`); 
+  console.log(`NFT minted to address ${defaultAdmin}`); 
 } 
   
 main() .then(() => process.exit(0)) .catch((error) => { console.error(error); process.exit(1); }); 
