@@ -3,7 +3,8 @@ const { ethers, upgrades } = require("hardhat");
 
 async function main() { 
   const defaultAdmin = "0x3612cA87A30df105E53F6bb7673BeF1DEae1ff33";
-  const minter = "0xFbB28e9380B6657b4134329B47D9588aCfb8E33B"
+  // const minter = "0xFbB28e9380B6657b4134329B47D9588aCfb8E33B"
+  const minter = "0x3612cA87A30df105E53F6bb7673BeF1DEae1ff33"
 
   const IBLOXXToken = await ethers.getContractFactory("IBLOXXToken"); 
   console.log("Deploying IBLOXXToken..."); 
@@ -12,7 +13,7 @@ async function main() {
   await proxyIBLOXXToken.deployed; 
   console.log("IBLOXXToken deployed to:", proxyIBLOXXToken.address); 
 
-  const mintTx = await proxyIBLOXXToken.safeMint(initialOwner, "moke_uri"); 
+  const mintTx = await proxyIBLOXXToken.safeMint(initialOwner, "https://app.infura.io/");  // sample uri, TODO: change later
   await mintTx.wait(); 
   console.log(`NFT minted to address ${initialOwner}`); 
 } 
