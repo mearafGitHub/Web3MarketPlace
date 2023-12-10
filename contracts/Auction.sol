@@ -12,7 +12,6 @@ interface IERC721 {
 }
 
 
-
 contract Auction is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
 
