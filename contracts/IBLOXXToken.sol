@@ -32,13 +32,22 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721URIStorageUpgrad
         return tokenId;
     }
 
+    function mint(uint256 quantity) external payable returns (uint256) {
+        uint256 tokenId = _nextTokenId++;        
+        _mint(msg.sender, quantity);
+        return tokenId;
+    }
+
+    function adminMint(uint256 quantity) external payable onlyRole(DEFAULT_ADMIN_ROLE) {
+        _mint(msg.sender, quantity);
+    }
+
     function _authorizeUpgrade(address newImplementation)
         internal
         onlyRole(UPGRADER_ROLE)
         override
-    {
-
-
+    { 
+        //TODO: implimant role granting and test on remix first
     }
 
 
