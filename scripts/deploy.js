@@ -2,11 +2,12 @@
 const { ethers, upgrades } = require("hardhat");
 
 async function main() { 
-  const initialOwner = '0x3612cA87A30df105E53F6bb7673BeF1DEae1ff33';
+  const defaultAdmin = "0x3612cA87A30df105E53F6bb7673BeF1DEae1ff33";
+  const minter = "0xFbB28e9380B6657b4134329B47D9588aCfb8E33B"
 
   const IBLOXXToken = await ethers.getContractFactory("IBLOXXToken"); 
   console.log("Deploying IBLOXXToken..."); 
-  const proxyIBLOXXToken = await upgrades.deployProxy(IBLOXXToken, [initialOwner], { initializer: 'initialize' }); 
+  const proxyIBLOXXToken = await upgrades.deployProxy(IBLOXXToken, [defaultAdmin, minter, defaultAdmin], { initializer: 'initialize' }); 
 
   await proxyIBLOXXToken.deployed; 
   console.log("IBLOXXToken deployed to:", proxyIBLOXXToken.address); 
@@ -18,4 +19,4 @@ async function main() {
   
 main() .then(() => process.exit(0)) .catch((error) => { console.error(error); process.exit(1); }); 
 
-// ToDo: to deploy run:  npx hardhat run scripts/deploy.js --network goerli  
+// npx hardhat run scripts/deploy.js --network goerli  
