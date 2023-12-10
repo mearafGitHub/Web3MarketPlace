@@ -20,23 +20,27 @@ async function main() {
 
   const mintTx = await proxyIBLOXXTokenContract.safeMint(process.env.MINTER_ROLE, "https://app.infura.io/"); 
   const resultNFT = await mintTx.wait(); 
-  console.log("\nResult of minting NFT:\n", resultNFT)
+  console.log("\nSafe mint NFT:\n", resultNFT)
   console.log(`\nNFT minted to address "${resultNFT.to}".`); 
   
   const nft = await proxyIBLOXXTokenContract.mint(10); 
   const NFT = await nft.wait(); 
-  console.log("\nResult of minting NFT:\n", NFT)
-  console.log(`\nNFT minted to address "${NFT.to}".`); 
+  console.log("\nMint NFT:\n", NFT)
+  console.log(`\n10 NFTs minted to address "${NFT.to}".`); 
+
+  // Verify nIBLOXXToken Contract:
+  const contract_address = proxyIBLOXXTokenContract.target; 
+
 
   // Deploy Auction contract  -> UUPS proxy
-  console.log("\nDeploying Auction Contract..."); 
-  // Deploy the implementation contract via UUPS proxy 
-  const proxyAuctionContract = await upgrades.deployProxy(Auction, 
-    [process.env.DEFAULT_ADMIN, process.env.UPGRADER_ROLE], 
-    { initializer: 'initialize' }
-    ); 
+  // console.log("\nDeploying Auction Contract..."); 
+  // // Deploy the implementation contract via UUPS proxy 
+  // const proxyAuctionContract = await upgrades.deployProxy(Auction, 
+  //   [process.env.DEFAULT_ADMIN, process.env.UPGRADER_ROLE], 
+  //   { initializer: 'initialize' }
+  //   ); 
 
-  console.log("\nProxyAuctionContract contract deployed. Details:\n", proxyAuctionContract);
+  // console.log("\nProxyAuctionContract contract deployed. Details:\n", proxyAuctionContract);
 
   // const resultAuction = await proxyAuctionContract.deployed(); 
   // console.log("Result of de NFT:\n", resultAuction) 

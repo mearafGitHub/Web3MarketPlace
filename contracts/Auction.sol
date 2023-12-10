@@ -46,7 +46,7 @@ contract Auction is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
         _grantRole(UPGRADER_ROLE, upgrader);
     }
 
-    function start_auction ( uint256 _nft_id, IERC721 _nft, uint _end_date, uint _initial_price) external { 
+    function startAuction ( uint256 _nft_id, IERC721 _nft, uint _end_date, uint _initial_price) external { 
         require(msg.sender == owner, "Unauthorised request!");
         require(!is_started, "Auction has already started!");
         auction_initiator = payable(msg.sender);
@@ -63,7 +63,7 @@ contract Auction is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
         }
 
 
-    function end_auction() external{
+    function endAuction() external{
         require(msg.sender == owner, "Unauthorised Operation");
         require(is_ended, "Auction already ended.");
         require(block.timestamp >= end_at, "It's not ending time yet.");
