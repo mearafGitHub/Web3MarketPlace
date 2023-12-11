@@ -48,11 +48,11 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         _tokenPrices[tokenId] = price; 
     } 
 
-    function getTokenInfo(uint256 tokenId) external view returns (uint256) { 
+    function getTokenData(uint256 tokenId) external view returns (TokenData memory) { 
         return _tokens[tokenId];
     } 
 
-    function _setTokenInfo(uint256 tokenId, TokenData memory info) private { 
+    function _setTokenData(uint256 tokenId, TokenData memory info) private { 
         _tokens[tokenId] = info; 
     } 
 
@@ -73,7 +73,7 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         _tokenData.isForAuction = forAuction;
         
         _mint(tokenOwner, newTokenId);
-        _setTokenInfo(newTokenId, _tokenData);           
+        _setTokenData(newTokenId, _tokenData);           
         _setTokenPrice(newTokenId, price); 
 
         return newTokenId;
