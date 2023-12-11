@@ -200,9 +200,8 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
 
     function updateCollateral(uint256 _nftId, address payable _bidder, uint256 newBidOffer) private returns (bool){
         bool flag = false;
-        // TODO: Implement nftid => collateral 
 
-        // get lsit of collaterals --> mapping (uint256 => CollateralData[]) biddersCollaterals;
+        // get lsit of collaterals
         CollateralData[] memory collaterals = biddersCollaterals[_nftId];
 
         // Linear search of the collateral data of the given NFT and bidder address
@@ -210,11 +209,10 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
             uint256 collateralNftId = collaterals[i].nftId;
             address bidderAddress = collaterals[i].bidder;
 
-            // check token match
+            // check token-owner match
             if (collateralNftId == _nftId && bidderAddress == _bidder){
                 // Update the collateral record
                 collaterals[i].collateralAmount += newBidOffer;
-                // biddersCollaterals[_bidder].collateralAmount += newBidOffer;
                 flag = true;
             }
         }
@@ -223,10 +221,22 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     }
 
     function calculatePayBackAmount(uint256 nftId, address payable bidder) public returns (uint256){
-        // TODO: impliment logic
-        CollateralData [] memory _bidderCollateral = biddersCollaterals[nftId];
-
         uint256 payBackAmount = 0;
+
+        // get lsit of collaterals
+        CollateralData[] memory collaterals = biddersCollaterals[_nftId];
+
+        // Linear search of the collateral data of the given NFT and bidder address
+        for (uint i=0; i<collaterals.length; i++){
+            uint256 collateralNftId = collaterals[i].nftId;
+            address bidderAddress = collaterals[i].bidder;
+            
+            // check token-owner match
+            if (collateralNftId == _nftId && bidderAddress == _bidder){
+                // Update the collateral record
+                payBackAmount = collaterals[i].collateralAmount;
+            }
+        }
 
         return payBackAmount;
 
