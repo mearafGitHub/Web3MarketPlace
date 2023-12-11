@@ -17,6 +17,8 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
 
     mapping(uint256 => uint256) private _tokenPrices;
 
+    // TODO: create struct to organixe token informatino
+
     function initialize(address defaultAdmin, address minter, address upgrader)
         initializer public
     {
