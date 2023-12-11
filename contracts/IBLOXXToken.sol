@@ -13,13 +13,13 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
     uint256 private _nextTokenId;
+
     struct TokenData {
         uint256 id;
         string name;
         address payable owner;
         uint256 price;
     }
-
     TokenData _tokenData;
 
     mapping (uint256 => TokenData) _tokens;
@@ -43,7 +43,7 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         return _tokenPrices[tokenId];
     }
 
-    function getToken(uint256 tokenId) external view returns (uint256) { 
+    function getToken(uint256 tokenId) external view returns (TokenData memory) { 
         return _tokens[tokenId];
     } 
 
