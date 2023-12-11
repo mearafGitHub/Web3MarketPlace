@@ -10,38 +10,39 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 interface IERC721 {
     // bring TokenData here
     struct TokenData {
-        uint256 id;
-        string name;
-        address owner;
-        uint256 price;
-    }
-
+       uint256 id;
+       string name;
+       address owner;
+       uint256 price;
+   }
+    
     function transfer(address, uint) external;
     function transferFrom(address, address, uint) external;
-    function getTokenData(uint256) external returns (TokenData memory);
     function getTokenPrice(uint256) external returns (uint256);
     function setTokenPrice(uint256) external returns (uint256);
-    function getToken(uint256) external returns (TokenData memory);
+    function getTokenData(uint256) external returns (TokenData memory);
     function mintNFT(uint256, string memory, address payable) external returns (uint256);
 }
 
 
 contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
-    IERC721 iBloxxNftContract;
-    address iBloxxNftContractAddress;
+    IERC721 public iBloxxNftContract;
+    address public iBloxxNftContractAddress;
+    IERC721.TokenData public _iBloxxTokenData;
 
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
 
-    struct TokenData {
+    struct MarketPlaceTokenData {
         uint256 id;
         string name;
         address owner;
         uint256 price;
     }
-     TokenData tokenData;
+     MarketPlaceTokenData marketPlaceTokenDatatokenData;
 
     struct NFTData {
-        TokenData nftTokenData;
+        MarketPlaceTokenData nftTokenData;
+        uint256 id;
         bool forAuction;
         uint256 auctionEndTime;
         bool auctionStarted;
@@ -96,7 +97,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         bytes memory nftContractBytes = hex"4ff75e8620c6699b9177337ac2eac2e24111d5aa";
         address contractAddress = payable(address(abi.decode(nftContractBytes, (address))));
         iBloxxNftContract = IERC721(contractAddress);
-       // IERC721.TokenData memory _iBloxxTokenData = iBloxxNftContract.TokenData;
+        _iBloxxTokenData = iBloxxNftContract.TokenData;
     }
 
     function getTokenMetadata(uint256 tokenId) public returns (IERC721.TokenData memory) { 
@@ -211,20 +212,30 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
             collateralData.bidder = _bidder;
             collateralData.collateralAmount += newBidOffer;
             // Add to collaterals record
-            biddersCollaterals[_nftId] = collateralData;
+            biddersCollaterals[_nftId].push(collateralData);
     }
 
     function updateCollateral(uint256 _nftId, address payable _bidder, uint256 newBidOffer) private returns (bool){
         bool flag = false;
         // TODO: Implement nftid => collateral 
 
-        // check token match
-        if (_nftId == biddersCollaterals[_bidder].nftId){
+        // get lsit of collaterals --> mapping (uint256 => CollateralData[]) biddersCollaterals;
+        CollateralData[] memory collaterals = biddersCollaterals[_nftId];
 
-            // Update the collateral record
-            biddersCollaterals[_bidder].collateralAmount += newBidOffer;
-            flag = true;
+        // Linear search of the collateral data of the given NFT and bidder address
+        for (uint i=0; i<collaterals.length; i++){
+            uint256 collateralNftId = collaterals[i].nftId;
+            address bidderAddress = collaterals[i].bidder;
+
+            // check token match
+            if (collateralNftId == _nftId && bidderAddress == _bidder){
+                // Update the collateral record
+                collaterals[i].collateralAmount += newBidOffer;
+                // biddersCollaterals[_bidder].collateralAmount += newBidOffer;
+                flag = true;
+            }
         }
+
         return flag;
     }
 
@@ -245,16 +256,17 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         
         uint256 newNftID = iBloxxNftContract.mintNFT(price, nftName, payable(msg.sender));
 
+        // nftData.price = price;
+        // nftData.name = nftName;
+        // nftData.owner = payable(msg.sender);
+
         nftData.id = newNftID;
-        nftData.price = price;
-        nftData.name = nftName;
         nftData.forAuction = isForAuction;
-        nftData.owner = payable(msg.sender);
         nftData.auctionEndTime = auctonEndTime;
         
         // work here
         if (isForAuction){
-            setAuctionNFTs(newNftID);
+            setAuctionNFTs(newNftID, nftData);
         }else{
             setFixedPriceNFTs(newNftID);
         }
@@ -264,14 +276,13 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     function startAuction (uint256 nftId, uint auctionEndsAt, uint256 initialPrice) external { 
 
         // check for owner 
-        tokenData = iBloxxNftContract.getTokenData(nftId);
+        _iBloxxTokenData = iBloxxNftContract.getTokenData(nftId);
 
-        require(msg.sender == tokenData.owner, "Unauthorised request!");
-
+        require(msg.sender == _iBloxxTokenData.owner, "Unauthorised request!");
         require(checkAuctionStartedSatus(nftId), "Auction has already started!");
 
         // Set NFT for Auction
-        nftData.nftTokenData = tokenData;
+        nftData.nftTokenData = _iBloxxTokenData;
         nftData.isForAuction = true;
         nftData.auctionStarted = true;
         nftData.highestBidder = payable(msg.sender);
