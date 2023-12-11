@@ -14,10 +14,10 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
     uint256 private _nextTokenId;
     struct TokenData {
-        uint id;
+        uint256 id;
         string name;
         address payable owner;
-        uint price;
+        uint256 price;
         bool isForAuction;
     }
 
@@ -63,7 +63,7 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         return tokenId;
     }
 
-    function mintNFT(uint price, string memory tokenName, bool forAuction, address payable tokenOwner) external onlyRole(MINTER_ROLE) returns (uint256){ 
+    function mintNFT(uint256 price, string memory tokenName, bool forAuction, address payable tokenOwner) external onlyRole(MINTER_ROLE) returns (uint256){ 
         // TODO: Think of a require condition 
 
         uint256 newTokenId = _nextTokenId++;  
