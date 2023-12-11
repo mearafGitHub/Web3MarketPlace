@@ -106,11 +106,18 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     function removeNftFromAucton(uint256) private returns (bool){}
 
     // Fixed-Price NFTs
-    function setFixedPriceNFTs(uint256) private returns (bool){}
+    function setFixedPriceNFTs(uint256 nftId, NFTData memory nft) private returns (bool){
+        _nftsForFixedPrice[nftId] = nft;
+    }
 
-    function getFixedPriceNFTs()public returns (NFTData memory){}
+    // Set and Get NFT price
+    function setPriceNFT(uint256 nftId, uint256 price) public {
+        _nfts[nftId].price = price;
+    }
 
-    function updateFixedPriceNFT(uint256) private returns (bool){}
+    function getPriceNFT(uint256 nftId) public returns (uint256){}
+
+    function updatePriceNFT(uint256 nftId) private returns (bool){}
 
     // Get and Set highest bid and bidder
     function setHighestBid(uint256 nftId, uint256 _highestBid) private {
@@ -154,7 +161,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
 
     // Set / Get bidders for an NFT
     function setBid(uint256 nftId, address payable bidder) private{
-
+        // TODO: impliment
     }
 
     function setBidder(uint256 nftId, address payable bidder) private{
@@ -224,7 +231,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         uint256 payBackAmount = 0;
 
         // get lsit of collaterals
-        CollateralData[] memory collaterals = biddersCollaterals[_nftId];
+        CollateralData[] memory collaterals = biddersCollaterals[nftId];
 
         // Linear search of the collateral data of the given NFT and bidder address
         for (uint i=0; i<collaterals.length; i++){
@@ -232,7 +239,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
             address bidderAddress = collaterals[i].bidder;
             
             // check token-owner match
-            if (collateralNftId == _nftId && bidderAddress == _bidder){
+            if (collateralNftId == nftId && bidderAddress == bidder){
                 // Update the collateral record
                 payBackAmount = collaterals[i].collateralAmount;
             }
@@ -242,9 +249,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
 
     }
 
-    // Check if bidder already made bid for an NFT
- 
-    // Creat NFT with user input data
+    // Creat NFT with user input data  
     function createNFT(uint256 price, string memory nftName, bool isForAuction, uint256 auctonEndTime) external{
         
         uint256 newNftID = iBloxxNftContract.mintNFT(price, nftName, payable(msg.sender));
@@ -259,7 +264,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         if (isForAuction){
             setAuctionNFTs(newNftID, nftData);
         }else{
-            setFixedPriceNFTs(newNftID);
+            setFixedPriceNFTs(newNftID, nftData);
         }
         
     }
