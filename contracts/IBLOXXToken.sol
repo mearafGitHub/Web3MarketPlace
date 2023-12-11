@@ -23,7 +23,7 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
     TokenData _tokenData;
 
     mapping (uint256 => TokenData) _tokens;
-    mapping(uint256 => uint256) private _tokenPrices;
+    mapping (uint256 => uint256) private _tokenPrices;
 
 
     function initialize(address defaultAdmin, address minter, address upgrader)
@@ -65,7 +65,8 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
     function mintNFT(uint256 price, string memory tokenName, address payable tokenOwner) external onlyRole(MINTER_ROLE) returns (uint256){ 
         // TODO: Think of a require condition 
 
-        uint256 newTokenId = _nextTokenId++;  
+        uint256 newTokenId = _nextTokenId++; 
+        // TokenData newTokenData - TODO: Think of the pros and cons
         _tokenData.id = newTokenId;
         _tokenData.name = tokenName;
         _tokenData.owner = tokenOwner;
