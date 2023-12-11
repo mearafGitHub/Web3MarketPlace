@@ -78,16 +78,6 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     event WinnerAnnounced(address payable winner, uint winner_bid_amount, bytes tx_data); 
     event Withdraw(address bidder, uint, bytes);
 
-    // ether scan link for my quick reference: 
-    // https://goerli.etherscan.io/nft/0x90509fdb1523f0ae75f2f0e5f47781ea90d1744b/10
-
-    // TODO: Access Token Data
-    // TODO: Track bidders by tokenID  -- use map and struct, and update map at bid function
-    // TODO: Track auction ending time by tokenID 
-    // TODO: Track auction based tokens and retun full data - use mapp and struct and update minting time
-    // TODO: Test cases for each of the functioins 
-    // TODO: Create NodeJs API to interact with these funtions
-
 
     function initialize(address defaultAdmin, address upgrader)
         initializer public
@@ -102,17 +92,6 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         address contractAddress = payable(address(abi.decode(nftContractBytes, (address))));
         iBloxxNftContract = IERC721(contractAddress);
     }
-
-    // function getTokenMetadata(uint256 tokenId) public returns (IERC721.TokenData memory) { 
-    //     return iBloxxNftContract.getTokenData(tokenId); 
-    // } 
-
-     // function getNFTOwner(uint256 nftId) public returns (address payable){
-    //    IERC721.TokenData memory _tokenData = iBloxxNftContract.getTokenData(nftId);
-    //     address _owner = _tokenData.owner;
-    //     return payable(_owner);
-    // }
-
 
     // single Aucton NFT
     function setAuctionNFTs(uint256 nftId, NFTData memory nft) private returns (bool){
@@ -373,12 +352,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     function withdraw(uint256 nftId) external{
 
         uint256 payBackAmount = calculatePayBackAmount(nftId, payable(msg.sender));
-
         require(payBackAmount > 0, "You have no balance!");
-        // TODO: give it some idle time to avoid a breach
-        
-        // TODO: Reset due payback/collateral amount to zero
-        
 
         // send the due payment
         (bool sent, bytes memory tx_data) = payable(msg.sender).call{value: payBackAmount}(
