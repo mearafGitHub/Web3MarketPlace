@@ -40,7 +40,7 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         _grantRole(UPGRADER_ROLE, upgrader);
     }
 
-    function getTokenPrice(uint256 tokenId) public view returns (uint256) { 
+    function getTokenPrice(uint256 tokenId) external view returns (uint256) { 
         return _tokenPrices[tokenId];
     } 
 
@@ -52,14 +52,14 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         _tokens[tokenId] = info; 
     } 
 
-    function safeMint(address payable to) public payable onlyRole(MINTER_ROLE) 
+    function safeMint(address payable to) external onlyRole(MINTER_ROLE) 
     returns (uint256){
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         return tokenId;
     }
 
-    function mintNFT(uint price, string memory tokenName, bool forAuction, address payable tokenOwner) public onlyRole(MINTER_ROLE) returns (uint256){ 
+    function mintNFT(uint price, string memory tokenName, bool forAuction, address payable tokenOwner) external onlyRole(MINTER_ROLE) returns (uint256){ 
         // TODO: Think of a require condition 
 
         uint256 newTokenId = _nextTokenId++;  
@@ -71,6 +71,7 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         _mint(tokenOwner, newTokenId);
         _setTokenInfo(newTokenId, _tokenData);           
         _setTokenPrice(newTokenId, price); 
+
         return newTokenId;
     } 
 
@@ -80,7 +81,7 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
 
     function _authorizeUpgrade(address newImplementation) internal override onlyRole(DEFAULT_ADMIN_ROLE){} 
 
-     // Override required by Solidity for UUPS function
+    // Override required by Solidity for UUPS function
     function _update(address to, uint256 tokenId, address auth)
         internal
         override(ERC721Upgradeable, ERC721EnumerableUpgradeable)
