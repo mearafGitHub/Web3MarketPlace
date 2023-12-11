@@ -20,7 +20,7 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         address payable owner;
         uint256 price;
     }
-    TokenData _tokenData;
+    TokenData public _tokenData;
 
     mapping (uint256 => TokenData) _tokens;
     mapping (uint256 => uint256) private _tokenPrices;
