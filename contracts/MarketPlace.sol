@@ -34,14 +34,15 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
 
     IERC721 nft;
     uint256 nft_id;
-    address payable nftContractCddress;
+    address payable nftContractAddress;
 
     // ether scan link for my quick reference: 
     // https://goerli.etherscan.io/nft/0x90509fdb1523f0ae75f2f0e5f47781ea90d1744b/10
 
     // TODO: Access Token Data
 
-    
+
+
     // TODO: Track bidders by tokenID  -- use map, and update map at bid function
     // TODO: Track auction ending time by tokenID 
     // TODO: Track bidders by tokenID and retun full data - use map and struct
