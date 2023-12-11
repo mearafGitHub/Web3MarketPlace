@@ -18,7 +18,6 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         string name;
         address payable owner;
         uint256 price;
-        bool isForAuction;
     }
 
     TokenData _tokenData;
@@ -44,7 +43,7 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         return _tokenPrices[tokenId];
     } 
 
-    function _setTokenPrice(uint256 tokenId, uint256 price) private { 
+    function setTokenPrice(uint256 tokenId, uint256 price) private { 
         _tokenPrices[tokenId] = price; 
     } 
 
@@ -52,7 +51,7 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         return _tokens[tokenId];
     } 
 
-    function _setTokenData(uint256 tokenId, TokenData memory info) private { 
+    function setTokenData(uint256 tokenId, TokenData memory info) private { 
         _tokens[tokenId] = info; 
     } 
 
@@ -63,18 +62,17 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         return tokenId;
     }
 
-    function mintNFT(uint256 price, string memory tokenName, bool forAuction, address payable tokenOwner) external onlyRole(MINTER_ROLE) returns (uint256){ 
+    function mintNFT(uint256 price, string memory tokenName, address payable tokenOwner) external onlyRole(MINTER_ROLE) returns (uint256){ 
         // TODO: Think of a require condition 
 
         uint256 newTokenId = _nextTokenId++;  
         _tokenData.id = newTokenId;
         _tokenData.name = tokenName;
         _tokenData.owner = tokenOwner;
-        _tokenData.isForAuction = forAuction;
         
         _mint(tokenOwner, newTokenId);
-        _setTokenData(newTokenId, _tokenData);           
-        _setTokenPrice(newTokenId, price); 
+        setTokenData(newTokenId, _tokenData);           
+        setTokenPrice(newTokenId, price); 
 
         return newTokenId;
     } 
