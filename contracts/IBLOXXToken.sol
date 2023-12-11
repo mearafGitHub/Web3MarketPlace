@@ -30,11 +30,19 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         _grantRole(UPGRADER_ROLE, upgrader);
     }
 
+    function getTokenPrice(uint256 tokenId) public view returns (uint256) { 
+        return _tokenPrices[tokenId];
+    } 
+
+    function _setTokenPrice(uint256 tokenId, uint256 price) private { 
+        _tokenPrices[tokenId] = price; 
+    } 
+
+
     function safeMint(address payable to) public payable onlyRole(MINTER_ROLE) 
     returns (uint256){
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
-        // _setTokenURI(tokenId, uri);
         return tokenId;
     }
 
@@ -42,19 +50,9 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
     { 
         uint256 newTokenId = _nextTokenId++; 
         _mint(recipient, price); 
-        // _setTokenURI(newTokenId, tokenURI); 
-       // _setTokenPrice(newTokenId, price); 
+        _setTokenPrice(newTokenId, price); 
         return newTokenId;
     } 
-
-    function getTokenPrice(uint256 tokenId) public view returns (uint256) { 
-        return _tokenPrices[tokenId];
-    } 
-
-    function _setTokenPrice(uint256 tokenId, uint256 price) private { 
-        _tokenPrices[tokenId] = price; 
-        } 
-
 
     function adminMint(uint256 quantity) external payable onlyRole(DEFAULT_ADMIN_ROLE) {
         _mint(msg.sender, quantity);
