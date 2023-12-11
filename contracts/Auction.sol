@@ -34,7 +34,10 @@ contract Auction is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
 
     IERC721 nft;
     uint256 nft_id;
+    address payable nftContractCddress;
 
+    // ether scan link for my quic reference: 
+    // https://goerli.etherscan.io/nft/0x90509fdb1523f0ae75f2f0e5f47781ea90d1744b/10
 
     function initialize(address defaultAdmin, address upgrader)
         initializer public
@@ -44,7 +47,15 @@ contract Auction is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
 
         _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
         _grantRole(UPGRADER_ROLE, upgrader);
+        nftContractCddress = "0x90509fdB1523f0aE75F2f0e5f47781Ea90d1744b";
+        nft = IERC721Metadata(nftContractCddress); 
     }
+
+    function getTokenMetadata(uint256 tokenId) public view returns (string memory) { 
+
+        return nft.tokenURI(tokenId); 
+
+    } 
 
     function startAuction ( uint256 _nft_id, IERC721 _nft, uint _end_date, uint _initial_price) external { 
         require(msg.sender == owner, "Unauthorised request!");
