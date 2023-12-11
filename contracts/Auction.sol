@@ -12,7 +12,7 @@ interface IERC721 {
 }
 
 
-contract Auction is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
+contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
 
     address payable owner;
@@ -38,6 +38,14 @@ contract Auction is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
 
     // ether scan link for my quic reference: 
     // https://goerli.etherscan.io/nft/0x90509fdb1523f0ae75f2f0e5f47781ea90d1744b/10
+
+    // TODO: Track bidders by tokenID  -- use map, and update map at bid function
+    // TODO: Track auction ending time by tokenID 
+    // TODO: Track bidders by tokenID and retun full data - use map and struct
+    // TODO: Track auction based tokens and retun full data - use mapp and struct and update minting time
+
+    // TODO: Create NodeJs API to interact with this funtions
+
 
     function initialize(address defaultAdmin, address upgrader)
         initializer public
