@@ -1,17 +1,21 @@
-# Web3 Auction 
+# NFT Market Place with Auction and Fixed-price options
 
-A DApp where users can mint NFTs for auction or sell.
+A DApp where users can mint and list NFTs for auction or sell on fixed price.
 
 ## Upgradable Smart Contracts
 Built with upgradable solidity smart contracts using Openzeppelin 5.0 and HardHat.
 
 
-Try running some of the following tasks:
+Run these commands to get started with the project after clonning to your machine:
 
 ```shell
-npx hardhat help
-npx hardhat test
+npm install
+
+npx hardhat compile
+
 REPORT_GAS=true npx hardhat test
+
 npx hardhat node
-npx hardhat run scripts/deploy.js
+
+npx hardhat run scripts/deploy.js --network goerli_quick_node 
 ```
