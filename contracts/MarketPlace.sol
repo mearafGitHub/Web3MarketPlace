@@ -9,6 +9,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 interface IERC721 {
     function transfer(address, uint) external;
     function transferFrom(address, address, uint) external;
+    function getTokenData(uint256) external returns (string memory);
 }
 
 
@@ -32,17 +33,15 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     event WinnerAnnounced(address payable winner, uint winner_bid_amount, bytes tx_data); 
     event Withdraw(address bidder, uint, bytes);
 
-    IERC721 nft;
+    IERC721 iBloxxNftContractInterface;
     uint256 nft_id;
     address payable nftContractAddress;
+
 
     // ether scan link for my quick reference: 
     // https://goerli.etherscan.io/nft/0x90509fdb1523f0ae75f2f0e5f47781ea90d1744b/10
 
     // TODO: Access Token Data
-
-
-
     // TODO: Track bidders by tokenID  -- use map, and update map at bid function
     // TODO: Track auction ending time by tokenID 
     // TODO: Track bidders by tokenID and retun full data - use map and struct
@@ -59,13 +58,15 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
 
         _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
         _grantRole(UPGRADER_ROLE, upgrader);
-        nftContractCddress = "0x90509fdB1523f0aE75F2f0e5f47781Ea90d1744b";
-        nft = IERC721Metadata(nftContractCddress); 
+
+        bytes memory nftContractBytes = hex"4ff75e8620c6699b9177337ac2eac2e24111d5aa";
+        nftContractAddress = payable(address(abi.decode(nftContractBytes, (address))));
+        iBloxxNftContractInterface = IERC721(nftContractAddress); 
     }
 
-    function getTokenMetadata(uint256 tokenId) public view returns (string memory) { 
+    function getTokenMetadata(uint256 tokenId) public returns (string memory) { 
 
-        return nft.tokenURI(tokenId); 
+        return iBloxxNftContractInterface.getTokenData(tokenId); 
 
     } 
 
@@ -76,9 +77,9 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         highest_bid = _initial_price; 
 
         nft_id = _nft_id;
-        nft = _nft;
+        iBloxxNftContractInterface = _nft;
         // take ownership of token from the auctioner 
-        nft.transferFrom(msg.sender, address(this), _nft_id);
+        iBloxxNftContractInterface.transferFrom(msg.sender, address(this), _nft_id);
         end_at = _end_date; // block.timestamp + 5 days; 
         
         is_started = true;
@@ -95,7 +96,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         if(highest_bidder != address(0)){
             
             // transfer nft to winner 
-            nft.transferFrom(address(this), highest_bidder, nft_id);
+            iBloxxNftContractInterface.transferFrom(address(this), highest_bidder, nft_id);
             
             // pay to auction initiator 
             (bool sent, bytes memory tx_data) = auction_initiator.call{value: highest_bid}(
@@ -107,7 +108,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
             
         } 
         else{
-            nft.transfer(auction_initiator, nft_id);
+            iBloxxNftContractInterface.transferFrom(address(this), auction_initiator, nft_id);
         }
     
         is_ended = true;
