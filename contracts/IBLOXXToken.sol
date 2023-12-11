@@ -12,19 +12,20 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
     
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
-
     uint256 private _nextTokenId;
+    struct TokenData {
+        uint id;
+        string name;
+        address payable owner;
+        uint price;
+        bool isForAuction;
+    }
 
+    TokenData _tokenData;
+
+    mapping (uint256 => TokenData) _tokens;
     mapping(uint256 => uint256) private _tokenPrices;
 
-    // TODO: create struct to organize token information
-    struct TokenData {
-        uint tokenId;
-        uint name;
-        bool autionBased;
-        bool fixedPrice;
-        uint endsAt;
-    }
 
     function initialize(address defaultAdmin, address minter, address upgrader)
         initializer public
@@ -47,6 +48,9 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         _tokenPrices[tokenId] = price; 
     } 
 
+    function _setTokenInfo(uint256 tokenId, TokenData memory info) private { 
+        _tokens[tokenId] = info; 
+    } 
 
     function safeMint(address payable to) public payable onlyRole(MINTER_ROLE) 
     returns (uint256){
@@ -55,10 +59,17 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         return tokenId;
     }
 
-    function mintNFTWithPrice(address recipient, uint256 price) public onlyRole(MINTER_ROLE) returns (uint256)
-    { 
-        uint256 newTokenId = _nextTokenId++; 
-        _mint(recipient, price); 
+    function mintNFT(uint price, string memory tokenName, bool forAuction, address payable tokenOwner) public onlyRole(MINTER_ROLE) returns (uint256){ 
+        // TODO: Think of a require condition 
+
+        uint256 newTokenId = _nextTokenId++;  
+        _tokenData.id = newTokenId;
+        _tokenData.name = tokenName;
+        _tokenData.owner = tokenOwner;
+        _tokenData.isForAuction = forAuction;
+        
+        _mint(tokenOwner, newTokenId);
+        _setTokenInfo(newTokenId, _tokenData);           
         _setTokenPrice(newTokenId, price); 
         return newTokenId;
     } 
