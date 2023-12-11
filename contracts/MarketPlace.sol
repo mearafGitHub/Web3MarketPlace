@@ -20,7 +20,8 @@ interface IERC721 {
     function transferFrom(address, address, uint) external;
     function getTokenPrice(uint256) external returns (uint256);
     function setTokenPrice(uint256) external returns (uint256);
-    function getTokenData(uint256) external returns (TokenData memory);
+    function getTokenData(uint256) external returns (uint256);
+    function getTokenOwner(uint256) external returns (address);
     function mintNFT(uint256, string memory, address payable) external returns (uint256);
 }
 
@@ -43,6 +44,9 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     struct NFTData {
         MarketPlaceTokenData nftTokenData;
         uint256 id;
+        string name;
+        address owner;
+        uint256 price;
         bool forAuction;
         uint256 auctionEndTime;
         bool auctionStarted;
@@ -97,18 +101,18 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         bytes memory nftContractBytes = hex"4ff75e8620c6699b9177337ac2eac2e24111d5aa";
         address contractAddress = payable(address(abi.decode(nftContractBytes, (address))));
         iBloxxNftContract = IERC721(contractAddress);
-        _iBloxxTokenData = iBloxxNftContract.TokenData;
     }
 
-    function getTokenMetadata(uint256 tokenId) public returns (IERC721.TokenData memory) { 
-        return iBloxxNftContract.getTokenData(tokenId); 
-    } 
+    // function getTokenMetadata(uint256 tokenId) public returns (IERC721.TokenData memory) { 
+    //     return iBloxxNftContract.getTokenData(tokenId); 
+    // } 
 
-    function getNFTOwner(uint256 nftId) public returns (address payable){
-       IERC721.TokenData memory _tokenData = iBloxxNftContract.getTokenData(nftId);
-        address _owner = _tokenData.owner;
-        return payable(_owner);
-    }
+     // function getNFTOwner(uint256 nftId) public returns (address payable){
+    //    IERC721.TokenData memory _tokenData = iBloxxNftContract.getTokenData(nftId);
+    //     address _owner = _tokenData.owner;
+    //     return payable(_owner);
+    // }
+
 
     // single Aucton NFT
     function setAuctionNFTs(uint256 nftId, NFTData memory nft) private returns (bool){
@@ -256,15 +260,13 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         
         uint256 newNftID = iBloxxNftContract.mintNFT(price, nftName, payable(msg.sender));
 
-        // nftData.price = price;
-        // nftData.name = nftName;
-        // nftData.owner = payable(msg.sender);
-
+        nftData.price = price;
+        nftData.name = nftName;
+        nftData.owner = payable(msg.sender);
         nftData.id = newNftID;
         nftData.forAuction = isForAuction;
         nftData.auctionEndTime = auctonEndTime;
         
-        // work here
         if (isForAuction){
             setAuctionNFTs(newNftID, nftData);
         }else{
@@ -276,20 +278,23 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     function startAuction (uint256 nftId, uint auctionEndsAt, uint256 initialPrice) external { 
 
         // check for owner 
-        _iBloxxTokenData = iBloxxNftContract.getTokenData(nftId);
+        // IERC721.TokenData memory _tokenData = BloxxNftContract.getTokenData(nftId) ;
+        address owner = iBloxxNftContract.getTokenOwner(nftId);
 
         require(msg.sender == _iBloxxTokenData.owner, "Unauthorised request!");
         require(checkAuctionStartedSatus(nftId), "Auction has already started!");
 
-        // Set NFT for Auction
-        nftData.nftTokenData = _iBloxxTokenData;
-        nftData.isForAuction = true;
-        nftData.auctionStarted = true;
-        nftData.highestBidder = payable(msg.sender);
-        nftData.highestBid = initialPrice;
-        nftData.auctionEndsAt = auctionEndsAt;
+        // get nft from map
+        NFTData memory _nftData = _nfts[nftId];
 
-        setAuctionNFTs(nftData);
+        // Set NFT for Auction
+        _nftData.forAuction = true;
+        _nftData.auctionStarted = true;
+        _nftData.highestBidder = payable(msg.sender);
+        _nftData.highestBid = initialPrice;
+        _nftData.auctionEndTime = auctionEndsAt;
+
+        setAuctionNFTs(nftId,_nftData);
 
         // take ownership of token from the auctioner for swift management 
         iBloxxNftContract.transferFrom(payable(msg.sender), address(this), nftId);
@@ -299,7 +304,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
 
 
     function endAuction(uint256 nftId) external{
-        address payable _owner = getNFTOwner(nftId);
+        address payable _owner = payable (iBloxxNftContract.getTokenOwner(nftId));
         require(msg.sender == _owner, "Unauthorised Operation");
 
         require(checkAuctionEndSatus(nftId), "Auction already ended.");
@@ -350,7 +355,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
             bool exists = checkBidder(payable(msg.sender), nftId);
 
             if(!exists){
-
+                // record collateral
                 holdCollateral(nftId, _highestBidder, offeredPrice);
 
             }else{
@@ -360,14 +365,14 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         }
 
         // 2. Make the bid  
-        setHighestBidder(payable(msg.sender));
+        setHighestBidder(nftId, payable(msg.sender));
 
-        emit NewBid(_highestBidder, getHighestBid, block.timestamp); 
+        emit NewBid(_highestBidder, getHighestBid(nftId), nftId); 
     }
 
     function withdraw(uint256 nftId) external{
 
-        uint256 payBackAmount = calculatePayBackAmount(payable(msg.sender));
+        uint256 payBackAmount = calculatePayBackAmount(nftId, payable(msg.sender));
 
         require(payBackAmount > 0, "You have no balance!");
         // TODO: give it some idle time to avoid a breach
