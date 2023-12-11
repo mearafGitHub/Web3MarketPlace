@@ -1,6 +1,6 @@
 // scripts/deploy-my-collectible.js
 const { ethers, upgrades } = require("hardhat");
-require('dotenv').config()
+require('dotenv').config();
 
 async function main() { 
 
