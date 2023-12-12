@@ -66,13 +66,38 @@ describe("MarketPlace", async function () {
 
   describe("Get All Auction Based NFTs", async function (){
     it("Must get all auctioned NFTs", async function getAllAuctionNFTs() {
-    
+      // ...deploy the contract 
+      async function main() { 
+        const MarketPlace = await ethers.getContractFactory("MarketPlace"); 
+        const proxyMarketPlaceContract = await upgrades.deployProxy(MarketPlace, [
+          process.env.DEFAULT_ADMIN, process.env.MINTER_ROLE, process.env.UPGRADER_ROLE
+        ], {
+          initializer: 'initialize'
+        });
+
+        await expect(proxyMarketPlaceContract.getAllAuctionNFTs() 
+        ).to.be.equal([]);
+
+      } 
     });
+
   });
 
   describe("Get All Fixed Priced NFTs", async function (){
-    it("Must get all fixed price NFTs", async function getAllFixedPriceNFT() {
-  
+    it("Must get all fixed price NFTs", async function getAllFixedPriceNFT()  {
+      // ...deploy the contract 
+      async function main() { 
+        const MarketPlace = await ethers.getContractFactory("MarketPlace"); 
+        const proxyMarketPlaceContract = await upgrades.deployProxy(MarketPlace, [
+          process.env.DEFAULT_ADMIN, process.env.MINTER_ROLE, process.env.UPGRADER_ROLE
+        ], {
+          initializer: 'initialize'
+        });
+
+        await expect(proxyMarketPlaceContract.getAllFixedPriceNFT() 
+        ).to.be.equal([]);
+
+      } 
     });
   });
 
