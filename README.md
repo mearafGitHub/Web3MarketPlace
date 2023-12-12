@@ -5,7 +5,7 @@ Web3 App where users can mint and list NFTs for auction or sell on fixed price.
 ## Upgradable Smart Contracts
 Built with [upgradable solidity smart contracts](https://blog.openzeppelin.com/introducing-openzeppelin-contracts-5.0), using Openzeppelin 5.0 and HardHat.
 
-## [Access Control](https://docs.openzeppelin.com/contracts/2.x/access-control)
+## Access Control
 [Access Control](https://docs.openzeppelin.com/contracts/2.x/access-control), is implimented with [Role Assignment](https://coinfog.on.fleek.co/), for different tasks like [Minting](https://coinfog.on.fleek.co/), NFTs and [Upgrading](https://docs.openzeppelin.com/learn/upgrading-smart-contracts), Contracts. 
 
 Contract Address:
