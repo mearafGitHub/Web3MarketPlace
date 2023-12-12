@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19; 
+pragma solidity ^0.8.20; 
 // "optimizer: enabled; runs: 200";
 // "revertStrings: disabled";
 
@@ -47,12 +47,13 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     mapping (uint256 => CollateralData[]) public _biddersCollaterals;
 
     event AuctionStarted(uint256 nftId); 
-    event AuctionEnded(uint256 auctionedNFTId, address highestBidderAddress, uint highestBidAmount); 
-    event NewBid(address indexed bidder, uint256 offerAmount, uint256 bidTime); 
-    event WinnerAnnounced(uint256 auctionedNFT, address payable winnerAddress, uint winnerBidAmount, bytes transactionData); 
-    event Withdraw(address bidderAddress, uint256 auctionedNFTId, bytes transactionData);
+    // event AuctionEnded(uint256 auctionedNFTId, address highestBidderAddress, uint highestBidAmount); 
+    // event NewBid(address indexed bidder, uint256 offerAmount, uint256 bidTime); 
+    // event WinnerAnnounced(uint256 auctionedNFT, address payable winnerAddress, uint winnerBidAmount, bytes transactionData); 
+    // event Withdraw(address bidderAddress, uint256 auctionedNFTId, bytes transactionData);
 
 
+    // Intialize contract with Upgradability and Role management 
     function initialize(address defaultAdmin, address minter, address upgrader)
         initializer public
     {
@@ -73,23 +74,24 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
 
         uint256 newTokenId = _nextTokenId++; 
         _mint(msg.sender, newTokenId);
-        uint256 newNftID = newTokenId;
-        // Create
+        
+        // Create new bft data
         NFTData memory _nftData;
+
         _nftData.price = price;
         _nftData.name = nftName;
         _nftData.owner = payable(msg.sender);
-        _nftData.id = newNftID;
+        _nftData.id = newTokenId;
         _nftData.forAuction = isForAuction;
         _nftData.auctionEndTime = auctonEndTime;
-        _allNFTs[newNftID] = nftData;
+        _allNFTs[newTokenId] = nftData;
 
         if (isForAuction){
             _nftsForAuctionList.push(nftData);
-            _auctionNFT[newNftID] = nftData;
+            _auctionNFT[newTokenId] = nftData;
         }else{
             _nftsForAuctionList.push(nftData);
-            _fixedPriceNFT[newNftID] = nftData;
+            _fixedPriceNFT[newTokenId] = nftData;
         }
     }
 
@@ -121,7 +123,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
 
     function endAuction(uint256 nftId) external{
         address payable _owner = payable(_auctionNFT[nftId].owner);
-
+        
         require(msg.sender != _owner, "Unauthorised!");
         require(_auctionNFT[nftId].auctionEnded, "Auction already ended.");
         require(block.timestamp >= _auctionNFT[nftId].auctionEndTime, "It's not ending time yet.");
@@ -134,9 +136,9 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
                 abi.encodeWithSignature("")
             ); 
             transferFrom(address(this), theHighestBidder, nftId);
-            require(sent, "Payment failed!");
+            require(sent, string(txData));
 
-            emit WinnerAnnounced(nftId, payable(theHighestBidder), theHighestBid, txData);
+            // emit WinnerAnnounced(nftId, payable(theHighestBidder), theHighestBid, txData);
         } else{
             // Transfer nft back to owner
             transferFrom(address(this), _owner, nftId);
@@ -147,7 +149,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         delete _nftsForAuctionList[nftId];
         _nftsForAuctionList.pop();
         
-        emit AuctionEnded( nftId, theHighestBidder, theHighestBid);
+        // emit AuctionEnded( nftId, theHighestBidder, theHighestBid);
     }
 
     function bid(uint256 nftId, uint256 offeredPrice) payable external{
@@ -162,7 +164,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         _highestBidder[nftId] = theHighestBidder;
         _highestBid[nftId] = offeredPrice;
 
-        emit NewBid(theHighestBidder, _highestBid[nftId], nftId); 
+        // emit NewBid(theHighestBidder, _highestBid[nftId], nftId); 
     }
 
     function _authorizeUpgrade(address newImplementation)
