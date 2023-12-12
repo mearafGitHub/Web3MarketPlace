@@ -1,5 +1,5 @@
 {
-  "name": "Web3 Marketplace",
+  "name": "Web3_Marketplace",
   "version": "1.0.0",
   "description": "NFT Market Place with auction and fixed price token.",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mearafGitHub/iBloxx.git"
+    "url": "git+https://github.com/mearafGitHub/Web3MarketPlace.git"
   },
   "keywords": [
     "\"auction\""
@@ -16,9 +16,9 @@
   "author": "mearaf_tadewos",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mearafGitHub/iBloxx/issues"
+    "url": "https://github.com/mearafGitHub/Web3MarketPlace/issues"
   },
-  "homepage": "https://github.com/mearafGitHub/iBloxx#readme",
+  "homepage": "https://github.com/mearafGitHub/Web3MarketPlace/blob/main/README.md",
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
