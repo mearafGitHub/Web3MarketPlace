@@ -40,6 +40,11 @@
       "address": "0x86D9C3494c55322d624a039D01C2176d6D049322",
       "txHash": "0x5700aef88cae4e84bd5cf44daac1d963fb6d91c70c73ea36e6381faa2bdfc108",
       "kind": "uups"
+    },
+    {
+      "address": "0x33CFf2131b462f341c1ca5160406b99A6c439797",
+      "txHash": "0x04b567c454d2ae889ce12c68fb5b13081a9f8286782d75939aec1a76a142f3ab",
+      "kind": "uups"
     }
   ],
   "impls": {
@@ -4154,6 +4159,445 @@
     "949929dae2a686a1064e69ac55e15b34af34c139048439cab0f8416f41619c4e": {
       "address": "0x953f1FEA798F3dfb62d4Bfae6290097327c810C7",
       "txHash": "0xb384274097c7dfbffc94e44a4fdf2194fd76a6dead83de98504177682137c5fa",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "_nextTokenId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256",
+            "contract": "MarketPlace",
+            "src": "contracts/MarketPlace.sol:17"
+          },
+          {
+            "label": "nftData",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_struct(NFTData)4558_storage",
+            "contract": "MarketPlace",
+            "src": "contracts/MarketPlace.sol:31"
+          },
+          {
+            "label": "_nftsForAuctionList",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_array(t_struct(NFTData)4558_storage)dyn_storage",
+            "contract": "MarketPlace",
+            "src": "contracts/MarketPlace.sol:32"
+          },
+          {
+            "label": "_nftsFixedPriceList",
+            "offset": 0,
+            "slot": "11",
+            "type": "t_array(t_struct(NFTData)4558_storage)dyn_storage",
+            "contract": "MarketPlace",
+            "src": "contracts/MarketPlace.sol:33"
+          },
+          {
+            "label": "_highestBid",
+            "offset": 0,
+            "slot": "12",
+            "type": "t_mapping(t_uint256,t_uint256)",
+            "contract": "MarketPlace",
+            "src": "contracts/MarketPlace.sol:41"
+          },
+          {
+            "label": "_auctionNFT",
+            "offset": 0,
+            "slot": "13",
+            "type": "t_mapping(t_uint256,t_struct(NFTData)4558_storage)",
+            "contract": "MarketPlace",
+            "src": "contracts/MarketPlace.sol:42"
+          },
+          {
+            "label": "_highestBidder",
+            "offset": 0,
+            "slot": "14",
+            "type": "t_mapping(t_uint256,t_address_payable)",
+            "contract": "MarketPlace",
+            "src": "contracts/MarketPlace.sol:43"
+          },
+          {
+            "label": "_fixedPriceNFT",
+            "offset": 0,
+            "slot": "15",
+            "type": "t_mapping(t_uint256,t_struct(NFTData)4558_storage)",
+            "contract": "MarketPlace",
+            "src": "contracts/MarketPlace.sol:44"
+          },
+          {
+            "label": "_allNFTs",
+            "offset": 0,
+            "slot": "16",
+            "type": "t_mapping(t_uint256,t_struct(NFTData)4558_storage)",
+            "contract": "MarketPlace",
+            "src": "contracts/MarketPlace.sol:45"
+          },
+          {
+            "label": "_nftBiddersList",
+            "offset": 0,
+            "slot": "17",
+            "type": "t_mapping(t_uint256,t_array(t_address)dyn_storage)",
+            "contract": "MarketPlace",
+            "src": "contracts/MarketPlace.sol:46"
+          },
+          {
+            "label": "_biddersCollaterals",
+            "offset": 0,
+            "slot": "18",
+            "type": "t_mapping(t_uint256,t_array(t_struct(CollateralData)4576_storage)dyn_storage)",
+            "contract": "MarketPlace",
+            "src": "contracts/MarketPlace.sol:47"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_bytes32": {
+            "label": "bytes32",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+            "label": "mapping(address => mapping(address => bool))",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)25_storage)": {
+            "label": "mapping(bytes32 => struct AccessControlUpgradeable.RoleData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address)": {
+            "label": "mapping(uint256 => address)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(AccessControlStorage)34_storage": {
+            "label": "struct AccessControlUpgradeable.AccessControlStorage",
+            "members": [
+              {
+                "label": "_roles",
+                "type": "t_mapping(t_bytes32,t_struct(RoleData)25_storage)",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(ERC721Storage)245_storage": {
+            "label": "struct ERC721Upgradeable.ERC721Storage",
+            "members": [
+              {
+                "label": "_name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_symbol",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "_owners",
+                "type": "t_mapping(t_uint256,t_address)",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "_balances",
+                "type": "t_mapping(t_address,t_uint256)",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "_tokenApprovals",
+                "type": "t_mapping(t_uint256,t_address)",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "_operatorApprovals",
+                "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+                "offset": 0,
+                "slot": "5"
+              }
+            ],
+            "numberOfBytes": "192"
+          },
+          "t_struct(InitializableStorage)93_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(RoleData)25_storage": {
+            "label": "struct AccessControlUpgradeable.RoleData",
+            "members": [
+              {
+                "label": "hasRole",
+                "type": "t_mapping(t_address,t_bool)",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "adminRole",
+                "type": "t_bytes32",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_address_payable": {
+            "label": "address payable",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(CollateralData)4576_storage)dyn_storage": {
+            "label": "struct MarketPlace.CollateralData[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_struct(NFTData)4558_storage)dyn_storage": {
+            "label": "struct MarketPlace.NFTData[]",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_address_payable)": {
+            "label": "mapping(uint256 => address payable)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_array(t_address)dyn_storage)": {
+            "label": "mapping(uint256 => address[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_array(t_struct(CollateralData)4576_storage)dyn_storage)": {
+            "label": "mapping(uint256 => struct MarketPlace.CollateralData[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_struct(NFTData)4558_storage)": {
+            "label": "mapping(uint256 => struct MarketPlace.NFTData)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_uint256,t_uint256)": {
+            "label": "mapping(uint256 => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(CollateralData)4576_storage": {
+            "label": "struct MarketPlace.CollateralData",
+            "members": [
+              {
+                "label": "collateralAmount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "nftId",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "bidder",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "2"
+              }
+            ],
+            "numberOfBytes": "96"
+          },
+          "t_struct(NFTData)4558_storage": {
+            "label": "struct MarketPlace.NFTData",
+            "members": [
+              {
+                "label": "id",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "name",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "price",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "forAuction",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "auctionEndTime",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "auctionStarted",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "auctionEnded",
+                "type": "t_bool",
+                "offset": 1,
+                "slot": "6"
+              },
+              {
+                "label": "highestBid",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "7"
+              },
+              {
+                "label": "highestBidder",
+                "type": "t_address_payable",
+                "offset": 0,
+                "slot": "8"
+              }
+            ],
+            "numberOfBytes": "288"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.ERC721": [
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_name",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:27",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_symbol",
+              "type": "t_string_storage",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:30",
+              "offset": 0,
+              "slot": "1"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_owners",
+              "type": "t_mapping(t_uint256,t_address)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:32",
+              "offset": 0,
+              "slot": "2"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:34",
+              "offset": 0,
+              "slot": "3"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_tokenApprovals",
+              "type": "t_mapping(t_uint256,t_address)",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:36",
+              "offset": 0,
+              "slot": "4"
+            },
+            {
+              "contract": "ERC721Upgradeable",
+              "label": "_operatorApprovals",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_bool))",
+              "src": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol:38",
+              "offset": 0,
+              "slot": "5"
+            }
+          ],
+          "erc7201:openzeppelin.storage.AccessControl": [
+            {
+              "contract": "AccessControlUpgradeable",
+              "label": "_roles",
+              "type": "t_mapping(t_bytes32,t_struct(RoleData)25_storage)",
+              "src": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol:61",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    },
+    "c6a45013652020a12ff8d071a5a5ac70c7e157b7311fdb7d891df9edafba8a21": {
+      "address": "0x25E6aa21a206627672B7E7dDa2368538309a2769",
+      "txHash": "0xe1d364e38f65875509e51d4551cddb8b064b9a5442e9d7ad02c1939795d43bad",
       "layout": {
         "solcVersion": "0.8.20",
         "storage": [
