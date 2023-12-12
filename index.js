@@ -35,6 +35,7 @@ app.get("/auctionNfts", async function (request, result) {
         result.status(200).send(nfts);
     } catch (error) {
         result.console.error(error);
+        result.status(500).send(error.message);
     }
 });
 
@@ -44,6 +45,7 @@ app.get('/fixedPriceNfts', async function(request, result) {
         result.status(200).send(nfts);
     } catch (error) {
         console.error("\nFound Error:\n",error);
+        result.status(500).send(error.message);
     }
 });
 
@@ -57,22 +59,20 @@ app.post("/createNFT", async function (request, result) {
         result.status(201).send(creatNFTTransaction);
     } catch (error) {
         console.error("\n createNFT Found Error:\n",error);
+        result.status(500).send(error.message);
     }
 });
 
-app.post('/createAuction', async function(request, result){
-    const sample = {}
-    result.status(201).send(sample);
-});
 
-app.get('/getAuctionEndTime/:nftID', async function(request, result){
+app.get('/getAuctionEndTime/:nftId', async function(request, result){
 
     try {
-        const nftId = request.params.nftID;
+        const nftId = request.params.nftId;
         const nfts = await contractInstanceMarketPlace.getAuctionEndTime(nftId);
-        result.status(200).send(nfts);
+        result.status(200).send(Object(nfts));
     } catch (error) {
         console.error("\n getAuctionEndTime Found Error:\n",error);
+        result.status(500).send(error.message);
     }
 });
 
@@ -84,6 +84,7 @@ app.get('/getBiddersOf/:nftID', async function(request, result){
         result.status(200).send(bidders);
     } catch (error) {
         console.error("\ngetBiddersOf Found Error:\n",error);
+        result.status(500).send(error.message);
     }
 });
 
@@ -94,6 +95,7 @@ app.post('/startAuction', async function(request, result){
         result.status(200).send(nfts);
     } catch (error) {
         console.error("\nendAuctionFound Error:\n",error);
+        result.status(500).send(error.message);
     }
 });
 
@@ -104,6 +106,7 @@ app.post('/endAuction', async function(request, result){
         result.status(200).send(nfts);
     } catch (error) {
         console.error("\nendAuctionFound Error:\n",error);
+        result.status(500).send(error.message);
     }
 });
 
