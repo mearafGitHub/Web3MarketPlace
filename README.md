@@ -1,6 +1,6 @@
 # NFT Market Place with Auction and Fixed-price options
 
-Web3 App where users can mint and list NFTs for auction or sell on fixed price.
+Web3 App where users can mint and list NFTs for auction or sell for a fixed price.
 
 ## Upgradable Smart Contracts
 Built with [upgradable solidity smart contracts](https://blog.openzeppelin.com/introducing-openzeppelin-contracts-5.0), using Openzeppelin 5.0 and HardHat.
@@ -16,7 +16,7 @@ Contract Address:
 - [Ether Scan](https://goerli.etherscan.io/address/0x33CFf2131b462f341c1ca5160406b99A6c439797)
 
 
-Run these commands to get started with the project after clonning to your machine:
+Run these commands to get started with the project after cloning to your machine:
 ```shell
 cd Web3MarketPlace
 npm install
