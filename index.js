@@ -68,7 +68,7 @@ app.post('/createAuction', async function(request, result){
 app.get('/getAuctionEndTime/:nftID', async function(request, result){
 
     try {
-        const id = request.params.nftID;
+        const nftId = request.params.nftID;
         const nfts = await contractInstanceMarketPlace.getAuctionEndTime(nftId);
         result.status(200).send(nfts);
     } catch (error) {
