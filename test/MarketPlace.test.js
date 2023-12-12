@@ -15,9 +15,6 @@ describe("MarketPlace", async function () {
   
 
   describe("Create NFT", async function (){
-    it("Must get input data from user", async function createNFT() {
-  
-    });
 
     it("Should revert with the right error if called with wrong role.", async function () {
       // ...deploy the contract 
@@ -115,7 +112,6 @@ describe("MarketPlace", async function () {
           initializer: 'initialize'
         });
         main().then(() => process.exit(0)) .catch((error) => { console.error(error); process.exit(1); }); 
-
 
         await expect(proxyMarketPlaceContract.getAuctionEndTime(nftId) 
         ).to.be.equal(0);
