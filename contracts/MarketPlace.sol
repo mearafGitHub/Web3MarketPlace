@@ -73,13 +73,17 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     function  getAllFixedPriceNFT() public view returns (NFTData[] memory){
         return _nftsFixedPriceList;
     }
+
+    function  getBiddersOf(uint256 nftId) public view returns ( address[] memory){
+        return _nftBiddersList[nftId];
+    }
   
     function createNFT(uint256 price, string memory nftName, bool isForAuction, uint256 auctonEndTime) external onlyRole(MINTER_ROLE) {
 
         uint256 newTokenId = _nextTokenId++; 
         _mint(msg.sender, newTokenId);
         
-        // Create new bft data
+        // Create new nft data
         NFTData memory _nftData;
 
         _nftData.price = price;
