@@ -69,6 +69,10 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     function getAllAuctionNFTs() public view returns (NFTData[] memory){
         return _nftsForAuctionList;
     }
+
+    function  getAllFixedPriceNFT() public view returns (NFTData[] memory){
+        return _nftsFixedPriceList;
+    }
   
     function createNFT(uint256 price, string memory nftName, bool isForAuction, uint256 auctonEndTime) external onlyRole(MINTER_ROLE) {
 
@@ -90,7 +94,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
             _nftsForAuctionList.push(nftData);
             _auctionNFT[newTokenId] = nftData;
         }else{
-            _nftsForAuctionList.push(nftData);
+            _nftsFixedPriceList.push(nftData); 
             _fixedPriceNFT[newTokenId] = nftData;
         }
     }
@@ -98,11 +102,9 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     function startAuction (uint256 nftId, uint auctionEndsAt, uint256 initialPrice) external { 
 
         address payable _owner = payable(_auctionNFT[nftId].owner);
-        require(msg.sender != _owner, "Unauthorised!");
-
-        require(_allNFTs[nftId].id != 0, "NFT not found or Invalid");
-        require(msg.sender != _owner, "Unauthorised!");
-        require(_allNFTs[nftId].auctionStarted, "Auction has already started!");
+        require(msg.sender != _owner); // "Unauthorised!"
+        require(_allNFTs[nftId].id != 0); // "Invalid nftId"
+        require(_allNFTs[nftId].auctionStarted); // "Already started!"
 
         NFTData memory _nftData = _allNFTs[nftId];
         _nftData.forAuction = true;
@@ -124,9 +126,9 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     function endAuction(uint256 nftId) external{
         address payable _owner = payable(_auctionNFT[nftId].owner);
         
-        require(msg.sender != _owner, "Unauthorised!");
-        require(_auctionNFT[nftId].auctionEnded, "Auction already ended.");
-        require(block.timestamp >= _auctionNFT[nftId].auctionEndTime, "It's not ending time yet.");
+        require(msg.sender != _owner); // "Unauthorised!"
+        require(_auctionNFT[nftId].auctionEnded); // "Auction already ended."
+        require(block.timestamp >= _auctionNFT[nftId].auctionEndTime); // "It's not ending time yet."
 
         address theHighestBidder = _highestBidder[nftId];
         uint256 theHighestBid = _highestBid[nftId];
@@ -154,9 +156,9 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
 
     function bid(uint256 nftId, uint256 offeredPrice) payable external{
         // Check if started, ended, and price increase
-        require(_auctionNFT[nftId].auctionStarted, "Auction has NOT started yet!");
-        require(_auctionNFT[nftId].auctionEnded, "Auction has ended!");
-        require( offeredPrice > _highestBid[nftId], "Price offer must be greater than the most recent bid!");
+        require(_auctionNFT[nftId].auctionStarted); // "Auction has NOT started yet!"
+        require(_auctionNFT[nftId].auctionEnded);  // "Auction has ended!"
+        require( offeredPrice > _highestBid[nftId]);  // "Price offer must be greater than the most recent bid!"
 
         address payable theHighestBidder = payable(_highestBidder[nftId]);
 
