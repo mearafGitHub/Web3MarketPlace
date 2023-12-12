@@ -1,4 +1,4 @@
-# NFT Market Place with Auction and Fixed-price options
+<img width="1470" alt="Screenshot 2023-12-11 at 1 32 07 PM" src="https://github.com/mearafGitHub/Web3MarketPlace/assets/44867763/db9d691d-5537-45e4-a446-c8220ad873f8"># NFT Market Place with Auction and Fixed-price options
 
 Web3 App where users can mint and list NFTs for auction or sell for a fixed price.
 
@@ -8,6 +8,12 @@ Built with [upgradable solidity smart contracts](https://blog.openzeppelin.com/i
 ## Access Control
 [Access Control](https://docs.openzeppelin.com/contracts/2.x/access-control), is implimented with [Role Assignment](https://coinfog.on.fleek.co/), for different tasks like [Minting](https://coinfog.on.fleek.co/), NFTs and [Upgrading](https://docs.openzeppelin.com/learn/upgrading-smart-contracts), Contracts. 
 
+<img width="1470" alt="Screenshot 2023-12-11 at 1 32 07 PM" src="https://github.com/mearafGitHub/Web3MarketPlace/assets/44867763/fe8921cc-422a-4418-b0e2-9f57527dad60">
+
+## NFT on MetaMask Wallet 
+<img width="1470" alt="Screenshot 2023-12-13 at 2 51 47 AM" src="https://github.com/mearafGitHub/Web3MarketPlace/assets/44867763/a34d10b1-4647-43bb-92cd-df23d0e914ad">
+
+
 ### Deployed
 Contract Address:
 
@@ -15,6 +21,9 @@ Contract Address:
 - NFT Contract address: 0x4493E79599a23D6644AEe0a2f47117D18980a645
 - [Ether Scan](https://goerli.etherscan.io/address/0x33CFf2131b462f341c1ca5160406b99A6c439797)
 
+Debugged on [Remix](https://remix.ethereum.org/#lang=en&optimize=false&runs=200&evmVersion=null&version=soljson-v0.8.22+commit.4fc1097e.js):
+
+<img width="1470" alt="Screenshot 2023-12-13 at 2 50 19 AM" src="https://github.com/mearafGitHub/Web3MarketPlace/assets/44867763/92b81165-c40d-4947-9a73-c20d99a73bc7">
 
 Run these commands to get started with the project after cloning to your machine:
 ```shell
