@@ -350,13 +350,12 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         // Set highestBidder to current bid
         setHighestBid(nftId, offeredPrice);  
 
-        // if any one bid for this auction
+        // check if any one bid for this auction
         // zero filled address check indicates that.
         address payable theHighestBidder = payable (getHighestBidder(nftId));
         if (theHighestBidder != address(0)){
 
             // 1. Take collateral
-
             // Check bidder already made bids to this auction
             bool exists = checkBidder(payable(msg.sender), nftId);
 

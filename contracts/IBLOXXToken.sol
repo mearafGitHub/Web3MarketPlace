@@ -45,7 +45,7 @@ contract IBLOXXToken is Initializable, ERC721Upgradeable, ERC721EnumerableUpgrad
         return _tokenPrices[tokenId];
     }
 
-    function getTokenOwner(uint256 tokenId) external view returns (uint256) { 
+    function getTokenOwner(uint256 tokenId) external view returns (address) { 
         return _tokenOwner[tokenId];
     } 
 

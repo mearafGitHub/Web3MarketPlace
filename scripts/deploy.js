@@ -5,7 +5,7 @@ require('dotenv').config();
 async function main() { 
 
   const IBLOXXToken = await ethers.getContractFactory("IBLOXXToken"); 
-  const Auction = await ethers.getContractFactory("Auction"); 
+  const MarketPlace = await ethers.getContractFactory("MarketPlace"); 
 
 
   // Deploy IBLOXXTokenContrac contract  -> UUPS proxy 
@@ -22,18 +22,18 @@ async function main() {
   const IBLOXXToken_contract_address = proxyIBLOXXTokenContract.target; 
  
 
-  // Deploy Auction contract  -> UUPS proxy
-  console.log("\nDeploying Auction Contract..."); 
+  // Deploy MarketPlace contract  -> UUPS proxy
+  console.log("\nDeploying MarketPlace Contract..."); 
   // Deploy the implementation contract via UUPS proxy 
-  const proxyAuctionContract = await upgrades.deployProxy(Auction, 
+  const proxyMarketPlaceContract = await upgrades.deployProxy(MarketPlace, 
     [process.env.DEFAULT_ADMIN, process.env.UPGRADER_ROLE], 
     { initializer: 'initialize' }
     ); 
 
-  console.log("\nProxyAuctionContract contract deployed. Details:\n", proxyAuctionContract);
+  console.log("\nProxyMarketPlaceContract contract deployed. Details:\n", proxyMarketPlaceContract);
 
-  // Verify Auction Contract:
-  const Auction_contract_address = proxyAuctionContract.target; 
+  // Verify MarketPlace Contract:
+  const MarketPlace_contract_address = proxyMarketPlaceContract.target; 
 
 } 
   
