@@ -8,17 +8,24 @@ Built with [upgradable solidity smart contracts](https://blog.openzeppelin.com/i
 ## Access Control
 [Access Control](https://docs.openzeppelin.com/contracts/2.x/access-control), is implimented with [Role Assignment](https://coinfog.on.fleek.co/), for different tasks like [Minting](https://coinfog.on.fleek.co/), NFTs and [Upgrading](https://docs.openzeppelin.com/learn/upgrading-smart-contracts), Contracts. 
 
+### Deployed
 Contract Address:
 
-- MarketPlace contract address -> 0xf8e81D47203A594245E36C48e151709F0C19fBe8
-- NFT Contract address -> 0x4493E79599a23D6644AEe0a2f47117D18980a645
+- MarketPlace contract address: 0xf8e81D47203A594245E36C48e151709F0C19fBe8
+- NFT Contract address: 0x4493E79599a23D6644AEe0a2f47117D18980a645
+- [Ether Scan](https://goerli.etherscan.io/address/0x33CFf2131b462f341c1ca5160406b99A6c439797)
 
 
 Run these commands to get started with the project after clonning to your machine:
 ```shell
+cd Web3MarketPlace
 npm install
 npx hardhat compile
 REPORT_GAS=true npx hardhat test
 npx hardhat node
 npx hardhat run scripts/deploy.js --network goerli_quick_node 
+```
+Run this to start the NodeJs server (in the same directory):
+```shell
+node . 
 ```
