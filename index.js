@@ -54,8 +54,7 @@ app.post("/createNFT", async function (request, result) {
         // Take parameters in request body
         const {price, nftName, isForAuction, auctionEndTime} = request.body;
         const creatNFTTransaction = await contractInstanceMarketPlace.createNFT(price, nftName, isForAuction, auctionEndTime);
-        // await creatNFTTransaction.wait();
-        
+
         result.status(201).send(creatNFTTransaction);
     } catch (error) {
         console.error("\n createNFT Found Error:\n",error);
