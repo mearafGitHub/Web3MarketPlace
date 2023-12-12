@@ -9,7 +9,7 @@ async function main() {
   console.log("\nDeploying MarketPlace Contract..."); 
   // Deploy the implementation contract via UUPS proxy 
   const proxyMarketPlaceContract = await upgrades.deployProxy(MarketPlace, 
-    [process.env.DEFAULT_ADMIN, process.env.UPGRADER_ROLE], 
+    [process.env.DEFAULT_ADMIN, process.env.MINTER_ROLE, process.env.UPGRADER_ROLE], 
     { initializer: 'initialize' }
   ); 
   console.log("\nProxyMarketPlaceContract contract deployed. Details:\n", proxyMarketPlaceContract);

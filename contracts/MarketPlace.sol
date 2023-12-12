@@ -1,34 +1,20 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.19; 
+// "optimizer: enabled; runs: 200";
+// "revertStrings: disabled";
 
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-
-// new contract addr: 0xf26262e62ef703aa09876a9d705914d6170233c6
-
-interface IERC721 {
-    // bring TokenData here
-    struct TokenData {
-       uint256 id;
-       string name;
-       address owner;
-       uint256 price;
-   }
-    function transfer(address, uint) external;
-    function transferFrom(address, address, uint) external;
-    function getTokenData(uint256) external returns (uint256);
-    function getTokenOwner(uint256) external returns (address);
-    function mintNFT(uint256, string memory, address payable) external returns (uint256);
-}
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 
 
-contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable {
-    IERC721 public iBloxxNftContract;
-    address public iBloxxNftContractAddress;
-    IERC721.TokenData public _iBloxxTokenData;
+contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable, ERC721Upgradeable {
 
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+
+    uint256 _nextTokenId;
 
     struct NFTData {
         uint256 id;
@@ -43,6 +29,8 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         address payable highestBidder; 
     }
     NFTData public nftData;
+    NFTData[] public _nftsForAuctionList;
+    NFTData[] public _nftsFixedPriceList;
 
     struct CollateralData {
         uint256 collateralAmount;
@@ -50,24 +38,12 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         address payable bidder;
     }
 
-    NFTData[] public _nftsForAuctionList;
-    NFTData[] public _nftsFixedPriceList;
-
-    mapping (uint256 => NFTData) public _allNFTs;
-
-    mapping (uint256 => uint256) private _tokenPrices;
-
     mapping (uint256 => uint256) _highestBid; 
-    mapping (uint256 => address) _highestBidder; 
-
-    mapping (address => uint256) _bidderAuctionedNFTs; 
-    mapping (address => uint256[]) _ownerFixedPriceNFTs; 
-
-    mapping (uint256 => NFTData) _nftsFixedPrice;
     mapping (uint256 => NFTData) _nftsAuction;
-
+    mapping (uint256 => address) _highestBidder; 
+    mapping (uint256 => NFTData) _nftsFixedPrice;
+    mapping (uint256 => NFTData) public _allNFTs;
     mapping (uint256 => address[]) private _nftBiddersList;
-
     mapping (uint256 => CollateralData[]) public _biddersCollaterals;
 
     event AuctionStarted(uint256 nftId); 
@@ -77,18 +53,15 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     event Withdraw(address bidderAddress, uint256 auctionedNFTId, bytes transactionData);
 
 
-    function initialize(address defaultAdmin, address upgrader)
+    function initialize(address defaultAdmin, address minter, address upgrader)
         initializer public
     {
         __AccessControl_init();
         __UUPSUpgradeable_init();
 
         _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
+        _grantRole(MINTER_ROLE, minter);
         _grantRole(UPGRADER_ROLE, upgrader);
-
-        bytes memory nftContractBytes = hex"4493E79599a23D6644AEe0a2f47117D18980a645";
-        address contractAddress = payable(address(abi.decode(nftContractBytes, (address))));
-        iBloxxNftContract = IERC721(contractAddress);
     }
 
     // Aucton NFTs
@@ -166,8 +139,11 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         return payBackAmount;
     }
 
-    function createNFT(uint256 price, string memory nftName, bool isForAuction, uint256 auctonEndTime) external{
-        uint256 newNftID = iBloxxNftContract.mintNFT(price, nftName, payable(msg.sender));
+    function createNFT(uint256 price, string memory nftName, bool isForAuction, uint256 auctonEndTime) external onlyRole(MINTER_ROLE) {
+
+        uint256 newTokenId = _nextTokenId++; 
+        _mint(msg.sender, newTokenId);
+        uint256 newNftID = 1;
         NFTData memory _nftData;
         _nftData.price = price;
         _nftData.name = nftName;
@@ -187,7 +163,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
 
     function startAuction (uint256 nftId, uint auctionEndsAt, uint256 initialPrice) external { 
         require(_allNFTs[nftId].id != 0, "NFT not found or Invalid");
-        require(msg.sender == _iBloxxTokenData.owner, "Unauthorised request!");
+        // require(msg.sender == _iBloxxTokenData.owner, "Unauthorised request!");
         require(_allNFTs[nftId].auctionStarted, "Auction has already started!");
         NFTData memory _nftData = _allNFTs[nftId];
         _nftData.forAuction = true;
@@ -196,31 +172,33 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         _nftData.highestBid = initialPrice;
         _nftData.auctionEndTime = auctionEndsAt;
         _nftsForAuctionList.push(_nftData);
-        iBloxxNftContract.transferFrom(payable(msg.sender), address(this), nftId);
+        // iBloxxNftContract.transferFrom(payable(msg.sender), address(this), nftId);
         emit AuctionStarted(nftId);  
     }
 
     function endAuction(uint256 nftId) external{
-        address payable _owner = payable (iBloxxNftContract.getTokenOwner(nftId));
-        require(msg.sender == _owner, "Unauthorised Operation");
-        require(getAuctionNFTData(nftId).auctionEnded, "Auction already ended.");
-        require(block.timestamp >= getAuctionNFTData(nftId).auctionEndTime, "It's not ending time yet.");
-        address theHighestBidder = _highestBidder[nftId];
-        uint256 theHighestBid = _highestBid[nftId];
-        if(theHighestBidder != address(0)){
-            iBloxxNftContract.transferFrom(address(this), theHighestBidder, nftId);
-            (bool sent, bytes memory txData) = _owner.call{value: theHighestBid}(
-                abi.encodeWithSignature("")
-            ); 
-            require(sent, "Payment to auction owner transaction has failed!");
-            emit WinnerAnnounced(nftId, payable(theHighestBidder), theHighestBid, txData);
-        } 
-        else{
-            iBloxxNftContract.transferFrom(address(this), _owner, nftId);
-        }
-         _allNFTs[nftId].auctionEnded = true;
-        delete _nftsForAuctionList[nftId];
-        emit AuctionEnded( nftId, theHighestBidder, theHighestBid);
+        // address payable _owner = payable (iBloxxNftContract.getTokenOwner(nftId));
+        // require(msg.sender == _owner, "Unauthorised Operation");
+        // require(getAuctionNFTData(nftId).auctionEnded, "Auction already ended.");
+        // require(block.timestamp >= getAuctionNFTData(nftId).auctionEndTime, "It's not ending time yet.");
+        // address theHighestBidder = _highestBidder[nftId];
+        // uint256 theHighestBid = _highestBid[nftId];
+        // if(theHighestBidder != address(0)){
+        //     // TODO: Sell to winner
+        //     iBloxxNftContract.transferFrom(address(this), theHighestBidder, nftId);
+        //     (bool sent, bytes memory txData) = _owner.call{value: theHighestBid}(
+        //         abi.encodeWithSignature("")
+        //     ); 
+        //     require(sent, "Payment to auction owner transaction has failed!");
+        //     emit WinnerAnnounced(nftId, payable(theHighestBidder), theHighestBid, txData);
+        // } 
+        // else{
+        //     // iBloxxNftContract.transferFrom(address(this), _owner, nftId);
+        //     // TODO: transfer nft back to owner
+        // }
+        //  _allNFTs[nftId].auctionEnded = true;
+        // delete _nftsForAuctionList[nftId];
+        // emit AuctionEnded( nftId, theHighestBidder, theHighestBid);
     }
 
     function bid(uint256 nftId, uint256 offeredPrice) payable external{
@@ -256,4 +234,8 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         onlyRole(UPGRADER_ROLE)
         override
     {}
+
+    function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControlUpgradeable, ERC721Upgradeable) returns (bool) {
+        return super.supportsInterface(interfaceId);
+    }
 }
