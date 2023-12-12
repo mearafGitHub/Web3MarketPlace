@@ -28,6 +28,7 @@ describe("MarketPlace", async function () {
         ], {
           initializer: 'initialize'
         });
+        main().then(() => process.exit(0)) .catch((error) => { console.error(error); process.exit(1); }); 
 
         await expect(proxyMarketPlaceContract.createNFT(
           price,
@@ -56,6 +57,7 @@ describe("MarketPlace", async function () {
         ], {
           initializer: 'initialize'
         });
+        main().then(() => process.exit(0)) .catch((error) => { console.error(error); process.exit(1); }); 
 
         await expect(proxyMarketPlaceContract.getBiddersOf(nftId) 
         ).to.be.equal([]);
@@ -93,6 +95,7 @@ describe("MarketPlace", async function () {
         ], {
           initializer: 'initialize'
         });
+        main().then(() => process.exit(0)) .catch((error) => { console.error(error); process.exit(1); }); 
 
         await expect(proxyMarketPlaceContract.getAllFixedPriceNFT() 
         ).to.be.equal([]);
@@ -103,7 +106,21 @@ describe("MarketPlace", async function () {
 
   describe("Get Auction End Time", async function (){
     it("Must get end time of auction for a given auctioned NFT", async function getAuctionEndTime() {
-  
+      // ...deploy the contract 
+      async function main() { 
+        const MarketPlace = await ethers.getContractFactory("MarketPlace"); 
+        const proxyMarketPlaceContract = await upgrades.deployProxy(MarketPlace, [
+          process.env.DEFAULT_ADMIN, process.env.MINTER_ROLE, process.env.UPGRADER_ROLE
+        ], {
+          initializer: 'initialize'
+        });
+        main().then(() => process.exit(0)) .catch((error) => { console.error(error); process.exit(1); }); 
+
+
+        await expect(proxyMarketPlaceContract.getAuctionEndTime(nftId) 
+        ).to.be.equal(0);
+
+      } 
     });
   });
 
