@@ -7,28 +7,22 @@ require('dotenv').config();
 
 describe("MarketPlace", async function () {
 
-  const price = anyUint(10);
   const nftName = "name";
+  const nftId = anyUint(1);
+  const price = anyUint(10);
   const isForAuction = false;
   const auctionEndTime = anyUint(2);
+  
 
   describe("Create NFT", async function (){
     it("Must get input data from user", async function createNFT() {
   
     });
 
-    it("Must create NFT", async function createNFT() {
-  
-    });
-
     it("Should revert with the right error if called with wrong role.", async function () {
-      
       // ...deploy the contract 
       async function main() { 
-        // Deploy MarketPlace contract  -> UUPS proxy
         const MarketPlace = await ethers.getContractFactory("MarketPlace"); 
-        console.log("\nDeploying MarketPlace Contract..."); 
-
         const proxyMarketPlaceContract = await upgrades.deployProxy(MarketPlace, [
           process.env.DEFAULT_ADMIN, process.env.MINTER_ROLE, process.env.UPGRADER_ROLE
         ], {
@@ -41,10 +35,9 @@ describe("MarketPlace", async function () {
           isForAuction,
           auctionEndTime
           )).to.be.revertedWith("You don't have MINTER_ROLE!");
-
       } 
-
     });
+
   });
 
   describe("Start Auction", async function (){
@@ -54,8 +47,20 @@ describe("MarketPlace", async function () {
   });
   
   describe("Get Bidders of NFT", async function (){
-    it("Must get list od bidders to a given NFT id", async function getBiddersOf() {
-  
+    it("Must get list of bidders to a given NFT id", async function getBiddersOf() {
+      // ...deploy the contract 
+      async function main() { 
+        const MarketPlace = await ethers.getContractFactory("MarketPlace"); 
+        const proxyMarketPlaceContract = await upgrades.deployProxy(MarketPlace, [
+          process.env.DEFAULT_ADMIN, process.env.MINTER_ROLE, process.env.UPGRADER_ROLE
+        ], {
+          initializer: 'initialize'
+        });
+
+        await expect(proxyMarketPlaceContract.getBiddersOf(nftId) 
+        ).to.be.equal([]);
+
+      } 
     });
   });
 
