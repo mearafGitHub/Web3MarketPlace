@@ -57,22 +57,25 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     NFTData[] public _nftsForAuctionList;
     NFTData[] public _nftsFixedPriceList;
 
-    mapping (uint256 => NFTData) _nfts;
+    mapping (uint256 => NFTData) public _allNFTs;
+
     mapping (uint256 => uint256) private _tokenPrices;
-    mapping (uint256 => address[]) private _nftBiddersList;
-    mapping (address => uint256) allBidsOfBidder; 
+
     mapping (uint256 => uint256) _highestBid; 
     mapping (uint256 => address) _highestBidder; 
-    mapping (uint256 => NFTData[]) _auctionNFTs; 
-    mapping (uint256 => NFTData[]) _ficedPriceNFTs; 
-    mapping (uint256 => CollateralData[]) biddersCollaterals;
-    mapping (address => uint256[]) biddersOfNftListByAddress;
 
-    event AuctionStarted(); 
-    event AuctionEnded(address highest_bidder, uint highest_bid); 
-    event NewBid(address indexed sender, uint amount, uint time); 
-    event WinnerAnnounced(address payable winner, uint winner_bid_amount, bytes transaction_data); 
-    event Withdraw(address bidder, uint, bytes);
+    mapping (address => uint256) _bidderAuctionedNFTs; 
+    mapping (address => uint256[]) _ownerFixedPriceNFTs; 
+
+    mapping (uint256 => address[]) private _nftBiddersList;
+
+    mapping (uint256 => CollateralData[]) public _biddersCollaterals;
+
+    event AuctionStarted(uint256 nftId); 
+    event AuctionEnded(uint256 auctionedNFTId, address highestBidderAddress, uint highestBidAmount); 
+    event NewBid(address indexed bidder, uint256 offerAmount, uint256 bidTime); 
+    event WinnerAnnounced(uint256 auctionedNFT, address payable winnerAddress, uint winnerBidAmount, bytes transactionData); 
+    event Withdraw(address bidderAddress, uint256 auctionedNFTId, bytes transactionData);
 
 
     function initialize(address defaultAdmin, address upgrader)
@@ -89,19 +92,10 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         iBloxxNftContract = IERC721(contractAddress);
     }
 
-    // single Aucton NFT
-    function setAuctionNFTs(NFTData memory nft) public{
-        _nftsForAuctionList.push(nft);
-    }
-    
-    function updateAuctionNFT(uint256 nftId) private returns (bool){}
-
     // Aucton NFTs
     function getAllAuctionNFTs() public view returns (NFTData[] memory){
         return _nftsForAuctionList;
     }
-
-    function removeNftFromAucton(uint256) private returns (bool){}
 
     // Fixed-Price NFTs
     function setFixedPriceNFTs(NFTData memory nft) private{
@@ -111,7 +105,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
 
     // Set and Get NFT price
     function setPriceNFT(uint256 nftId, uint256 price) public {
-        _nfts[nftId].price = price;
+        _allNFTs[nftId].price = price;
     }
 
     function getPriceNFT(uint256 nftId) public returns (uint256){}
@@ -123,17 +117,11 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         _highestBid[nftId] = highestBid;
     }
 
-    function getHighestBid(uint256 nftId) public view returns(uint256){
-        return _highestBid[nftId];
-    }
-
     function setHighestBidder(uint256 nftId, address theHighestBidder) public {
         _highestBidder[nftId] = theHighestBidder;
     }
 
-    function getHighestBidder(uint256 nftId) public view returns (address){
-        return _highestBidder[nftId];
-    }
+
 
     // get one auction NFT
     function getAuctionNFTData(uint256 nftId) public view returns (NFTData memory){
@@ -144,6 +132,15 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
             }
         }
         return tempNftData;
+    }
+
+    function deleteNFTfromAuctionList(uint256 nftId) private{
+        for (uint256 i=0; i<=_nftsForAuctionList.length; i++){
+            if (_nftsForAuctionList[i].id == nftId ){
+                //tempNftData = _nftsForAuctionList[i];
+                delete _nftsForAuctionList[i];
+            }
+        }
     }
 
     // Auction status for an NFT
@@ -183,27 +180,20 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         return _nftBiddersList[nftId];
     }
 
-    function checkBidder( address payable _bidder, uint256 nftId) public returns (bool){
+    function checkBidder( address payable bidder, uint256 nftId) public view returns (bool){
         bool found;
         address[] memory biddersList = _nftBiddersList[nftId];
 
-        // Invert mapping for searching
-        // map returns default value if key doesn't exist
-
         for (uint i=0; i<biddersList.length; i++){
-            address bidder = biddersList[i];
-            biddersOfNftListByAddress[bidder].push(nftId);
-        }
-        uint size = biddersOfNftListByAddress[_bidder].length;
-
-        // toggle flag
-        if(size != 0){
-            found = true;
+            address _bidder = biddersList[i];
+            // toggle flag
+            if(_bidder != bidder){
+                found = true;
+            } 
         }
         return found;
-
     } 
-
+    
     // Hold colateral of bidders
     function holdCollateral(uint256 _nftId, address payable _bidder, uint256 newBidOffer) private {
 
@@ -213,14 +203,14 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
             collateralData.bidder = _bidder;
             collateralData.collateralAmount += newBidOffer;
             // Add to collaterals record
-            biddersCollaterals[_nftId].push(collateralData);
+            _biddersCollaterals[_nftId].push(collateralData);
     }
 
     function updateCollateral(uint256 _nftId, address payable _bidder, uint256 newBidOffer) private view returns (bool){
         bool flag = false;
 
         // get lsit of collaterals
-        CollateralData[] memory collaterals = biddersCollaterals[_nftId];
+        CollateralData[] memory collaterals = _biddersCollaterals[_nftId];
 
         // Linear search of the collateral data of the given NFT and bidder address
         for (uint i=0; i<collaterals.length; i++){
@@ -241,7 +231,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         uint256 payBackAmount = 0;
 
         // get lsit of collaterals
-        CollateralData[] memory collaterals = biddersCollaterals[nftId];
+        CollateralData[] memory collaterals = _biddersCollaterals[nftId];
 
         // Linear search of the collateral data of the given NFT and bidder address
         for (uint i=0; i<collaterals.length; i++){
@@ -263,18 +253,21 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     function createNFT(uint256 price, string memory nftName, bool isForAuction, uint256 auctonEndTime) external{
         
         uint256 newNftID = iBloxxNftContract.mintNFT(price, nftName, payable(msg.sender));
+        NFTData memory _nftData;
+        _nftData.price = price;
+        _nftData.name = nftName;
+        _nftData.owner = payable(msg.sender);
+        _nftData.id = newNftID;
+        _nftData.forAuction = isForAuction;
+        _nftData.auctionEndTime = auctonEndTime;
 
-        nftData.price = price;
-        nftData.name = nftName;
-        nftData.owner = payable(msg.sender);
-        nftData.id = newNftID;
-        nftData.forAuction = isForAuction;
-        nftData.auctionEndTime = auctonEndTime;
+        // add to nft list
+        _allNFTs[newNftID] = nftData;
         
         if (isForAuction){
-            setAuctionNFTs(nftData);
+            _nftsForAuctionList.push(nftData);
         }else{
-            setFixedPriceNFTs(nftData);
+            _nftsForAuctionList.push(nftData);
         }
         
     }
@@ -282,14 +275,11 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     function startAuction (uint256 nftId, uint auctionEndsAt, uint256 initialPrice) external { 
 
         // check for owner 
-        // IERC721.TokenData memory _tokenData = BloxxNftContract.getTokenData(nftId) ;
-        // address owner = iBloxxNftContract.getTokenOwner(nftId);
-
         require(msg.sender == _iBloxxTokenData.owner, "Unauthorised request!");
         require(checkAuctionStartedSatus(nftId), "Auction has already started!");
 
-        // get nft from map
-        NFTData memory _nftData = _nfts[nftId];
+        // Get the nft from map
+        NFTData memory _nftData = _allNFTs[nftId];
 
         // Set NFT for Auction
         _nftData.forAuction = true;
@@ -298,12 +288,13 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         _nftData.highestBid = initialPrice;
         _nftData.auctionEndTime = auctionEndsAt;
 
-        setAuctionNFTs(_nftData);
+        //set NFT for auction
+        _nftsForAuctionList.push(_nftData);
 
         // take ownership of token from the auctioner for swift management 
         iBloxxNftContract.transferFrom(payable(msg.sender), address(this), nftId);
         
-        emit AuctionStarted();  
+        emit AuctionStarted(nftId);  
         }
 
 
@@ -314,45 +305,49 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         require(checkAuctionEndSatus(nftId), "Auction already ended.");
         require(block.timestamp >= getAuctoinEndDateTime(nftId), "It's not ending time yet.");
 
-        address theHighestBidder = getHighestBidder(nftId);
-        // default value for address(0) is a zero filled address hance it's the auction initiator
+        address theHighestBidder = _highestBidder[nftId];
+        uint256 theHighestBid = _highestBid[nftId];
+
+        // sell NFT for highest bidder
+        // see if any one bid on this auction
+        // default value for address(0) is a zero filled address. Indicates no bid.
         if(theHighestBidder != address(0)){
             
             // transfer nft to winner 
             iBloxxNftContract.transferFrom(address(this), theHighestBidder, nftId);
 
-            uint256 theHighestBid = getHighestBid(nftId);
             // pay to auction initiator 
             (bool sent, bytes memory txData) = _owner.call{value: theHighestBid}(
                 abi.encodeWithSignature("")
             ); 
             require(sent, "Payment to auction owner transaction has failed!");
-            
-            emit WinnerAnnounced(payable(theHighestBidder), theHighestBid, txData);
+            emit WinnerAnnounced(nftId, payable(theHighestBidder), theHighestBid, txData);
             
         } 
         else{
             // Send back the NFT bact to the owner
             iBloxxNftContract.transferFrom(address(this), _owner, nftId);
         }
+        // toggle indicator value
+         _allNFTs[nftId].auctionEnded = true;
 
-        setEndAuction(nftId);
-
-        emit AuctionEnded(getAuctionNFTData(nftId).highestBidder, getAuctionNFTData(nftId).highestBid);
+        // delete item  
+        delete _nftsForAuctionList[nftId];
+       
+        emit AuctionEnded( nftId, theHighestBidder, theHighestBid);
     }
 
     function bid(uint256 nftId, uint256 offeredPrice) payable external{
         
         require(checkAuctionStartedSatus(nftId), "Auction has NOT started yet!");
         require(checkAuctionEndSatus(nftId), "Auction has ended!");
-        require( offeredPrice > getHighestBid(nftId), "Auction has ended!");
+        require( offeredPrice > _highestBid[nftId], "Your offered price is must be greater than the most recent bid!");
 
         // Set highestBidder to current bid
         setHighestBid(nftId, offeredPrice);  
 
-        // check if any one bid for this auction
-        // zero filled address check indicates that.
-        address payable theHighestBidder = payable (getHighestBidder(nftId));
+        // check if any one has bid for this auction
+        address payable theHighestBidder = payable ( _highestBidder[nftId]);
         if (theHighestBidder != address(0)){
 
             // 1. Take collateral
@@ -368,11 +363,10 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
                 updateCollateral(nftId, theHighestBidder, offeredPrice);
             }
         }
-
         // 2. Make the bid  
         setHighestBidder(nftId, payable(msg.sender));
 
-        emit NewBid(theHighestBidder, getHighestBid(nftId), nftId); 
+        emit NewBid(theHighestBidder, _highestBid[nftId], nftId); 
     }
 
     function withdraw(uint256 nftId) external{
