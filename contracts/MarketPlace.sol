@@ -47,12 +47,6 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     mapping (uint256 => CollateralData[]) public _biddersCollaterals;
 
     event AuctionStarted(uint256 nftId); 
-    // event AuctionEnded(uint256 auctionedNFTId, address highestBidderAddress, uint highestBidAmount); 
-    // event NewBid(address indexed bidder, uint256 offerAmount, uint256 bidTime); 
-    // event WinnerAnnounced(uint256 auctionedNFT, address payable winnerAddress, uint winnerBidAmount, bytes transactionData); 
-    // event Withdraw(address bidderAddress, uint256 auctionedNFTId, bytes transactionData);
-
-
     // Intialize contract with Upgradability and Role management 
     function initialize(address defaultAdmin, address minter, address upgrader)
         initializer public
@@ -130,37 +124,6 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         
         emit AuctionStarted(nftId);  
     }
-
-    // function endAuction(uint256 nftId) external{
-    //     address payable _owner = payable(_auctionNFT[nftId].owner);
-        
-    //     require(msg.sender != _owner); // "Unauthorised!"
-    //     require(_auctionNFT[nftId].auctionEnded); // "Auction already ended."
-    //     require(block.timestamp >= _auctionNFT[nftId].auctionEndTime); // "It's not ending time yet."
-
-    //     address theHighestBidder = _highestBidder[nftId];
-    //     uint256 theHighestBid = _highestBid[nftId];
-    //     // Sell to winner
-    //     if(theHighestBidder != address(0)){
-    //         (bool sent, bytes memory txData) = _owner.call{value: theHighestBid}(
-    //             abi.encodeWithSignature("")
-    //         ); 
-    //         transferFrom(address(this), theHighestBidder, nftId);
-    //         require(sent, string(txData));
-
-    //         // emit WinnerAnnounced(nftId, payable(theHighestBidder), theHighestBid, txData);
-    //     } else{
-    //         // Transfer nft back to owner
-    //         transferFrom(address(this), _owner, nftId);
-    //     }
-    //     _allNFTs[nftId].auctionEnded = true;
-
-    //     // Remove from list and map
-    //     delete _nftsForAuctionList[nftId];
-    //     _nftsForAuctionList.pop();
-        
-    //     // emit AuctionEnded( nftId, theHighestBidder, theHighestBid);
-    // }
 
     function bid(uint256 nftId, uint256 offeredPrice) payable external{
         // Check if started, ended, and price increase
