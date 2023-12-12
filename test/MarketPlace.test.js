@@ -4,28 +4,28 @@ const { expect } = require("chai");
 const hre = require("hardhat");
 
 describe("MarketPlace", function () {
-  it("Should set the right unlockTime", async function createNFT() {
+  it("Must create NFT", async function createNFT() {
   
   });
 
-  it("Should set the right unlockTime", async function startAuction() {
+  it("Must start an auction", async function startAuction() {
   
   });
 
   // 
-  it("Should set the right unlockTime", async function getBiddersOf() {
+  it("Must get list od bidders to a given NFT id", async function getBiddersOf() {
   
   });
 
-  it("Should set the right unlockTime", async function getAllAuctionNFTs() {
+  it("Must get all auctioned NFTs", async function getAllAuctionNFTs() {
   
   });
   //
-  it("Should set the right unlockTime", async function getAllFixedPriceNFT() {
+  it("Must get all fixed price NFTs", async function getAllFixedPriceNFT() {
   
   });
 
-  it("Should set the right unlockTime", async function getAuctionEndTime() {
+  it("Must get end time of auction for a given auctioned NFT", async function getAuctionEndTime() {
   
   });
 
