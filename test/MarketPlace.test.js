@@ -1,31 +1,36 @@
 const {time, loadFixture,} = require("@nomicfoundation/hardhat-toolbox/network-helpers");
-  const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
-  const { expect } = require("chai");
-  
-  describe("MarketPlace", function () {
+const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
+const { expect } = require("chai");
+const hre = require("hardhat");
 
-    async function createNFT() {
-  
-    }
-
-    async function startAuction() {
-  
-    }
-
-    async function getAllAuctionNFTs() {
-  
-    }
-
-    async function getAllFixedPriceNFT() {
-  
-    }
-
-    async function getAuctionEndTime() {
-  
-    }
-
-    async function getBiddersOf() {
-  
-    }
+describe("MarketPlace", function () {
+  it("Should set the right unlockTime", async function createNFT() {
   
   });
+
+  it("Should set the right unlockTime", async function startAuction() {
+  
+  });
+
+  // 
+  it("Should set the right unlockTime", async function getBiddersOf() {
+  
+  });
+
+  it("Should set the right unlockTime", async function getAllAuctionNFTs() {
+  
+  });
+  //
+  it("Should set the right unlockTime", async function getAllFixedPriceNFT() {
+  
+  });
+
+  it("Should set the right unlockTime", async function getAuctionEndTime() {
+  
+  });
+
+});
+  
+
+    
+  
