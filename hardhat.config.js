@@ -13,7 +13,7 @@ module.exports = {
     }, 
     goerli_quick_node: { 
       url: process.env.QUICK_NODE_URL, 
-      accounts: [process.env.TEST_ACC_PK],
+      accounts: [process.env.TEST_ACC_PRIVATE_KEY],
     }, 
 
   }, 
