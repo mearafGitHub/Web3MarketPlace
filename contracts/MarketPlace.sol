@@ -100,7 +100,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         return _nftsForAuctionList;
     }
 
-    function getPriceNFT(uint256 nftId) public returns (uint256){
+    function getPriceNFT(uint256 nftId) public view returns (uint256){
         return _nftsFixedPrice[nftId].price;
     }
     
@@ -120,7 +120,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     function checkBidder( address payable bidder, uint256 nftId) public view returns (bool){
         bool found;
         address[] memory biddersList = _nftBiddersList[nftId];
-        if (iddersList.length > 0){
+        if (biddersList.length > 0){
             for (uint i=0; i<=biddersList.length; i++){
             address _bidder = biddersList[i];
                 if(_bidder != bidder){
@@ -141,7 +141,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
 
     function updateCollateral(uint256 _nftId, address payable _bidder, uint256 newBidOffer) private view returns (bool){
         bool flag = false;
-        CollateralData[] memory collaterals = _biddersCollaterals[nftId];
+        CollateralData[] memory collaterals = _biddersCollaterals[_nftId];
         if (collaterals.length > 0){
             for (uint i=0; i<=collaterals.length; i++){
                 uint256 collateralNftId = collaterals[i].nftId;
