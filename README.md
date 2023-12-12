@@ -5,6 +5,8 @@ A DApp where users can mint and list NFTs for auction or sell on fixed price.
 ## Upgradable Smart Contracts
 Built with upgradable solidity smart contracts using Openzeppelin 5.0 and HardHat.
 
+## Access Control
+Implimented with [Role Assignment] for different tasks like [Minting] NFTs and [Upgrading] Contract. 
 
 Run these commands to get started with the project after clonning to your machine:
 
