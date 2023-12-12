@@ -48,7 +48,6 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         uint256 collateralAmount;
         uint256 nftId;
         address payable bidder;
-
     }
 
     NFTData[] public _nftsForAuctionList;
@@ -87,7 +86,7 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         _grantRole(DEFAULT_ADMIN_ROLE, defaultAdmin);
         _grantRole(UPGRADER_ROLE, upgrader);
 
-        bytes memory nftContractBytes = hex"4ff75e8620c6699b9177337ac2eac2e24111d5aa";
+        bytes memory nftContractBytes = hex"4493E79599a23D6644AEe0a2f47117D18980a645";
         address contractAddress = payable(address(abi.decode(nftContractBytes, (address))));
         iBloxxNftContract = IERC721(contractAddress);
     }
