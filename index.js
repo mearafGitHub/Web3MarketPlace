@@ -9,18 +9,20 @@ const QUICK_NODE_URL = process.env.QUICK_NODE_URL;
 const TEST_ACC_PRIVATE_KEY = process.env.TEST_ACC_PRIVATE_KEY;
 
 const contractAddressIIBLOXXToken = process.env.MARKET_PLACE_CONTRACT_ADDRESS;
-const contractAddressMarektPlace = process.env.IBLOXX_CONTRACT_ADDRESS;
+const contractAddressMarketPlace = process.env.IBLOXX_CONTRACT_ADDRESS;
 
-const provider = new ethers.providers.JsonRpcProvider(QUICK_NODE_URL);
+const network = "goerli";
+// const provider = new ethers.providers.JsonRpcProvider(QUICK_NODE_URL);
+const provider = new ethers.InfuraProvider(network, process.env.INFURA_API_KEY);
 const signer = new ethers.Wallet(TEST_ACC_PRIVATE_KEY, provider);
 
-// MarektPlace contract
-const {abiMarektPlace} = require("./artifacts/contracts/MarektPlace.sol/MarektPlace.json");
-const contractInstanceMarektPlace = new ethers.Contract(contractAddress, abi, signer);
+// MarketPlace contract
+const {abiMarektPlace} = require("./artifacts/contracts/MarketPlace.sol/MarketPlace.json");
+// Fix: const contractInstanceMarketPlace = new ethers.Contract(contractAddressMarketPlace, abiMarektPlace, signer);
 
 // IBLOXXToken contract
 const {abiIBLOXXToken} = require("./artifacts/contracts/IBLOXXToken.sol/IBLOXXToken.json");
-const contractInstanceIBLOXXToken = new ethers.Contract(contractAddress, abi, signer);
+// Fix: const contractInstanceIBLOXXToken = new ethers.Contract(contractAddressIIBLOXXToken, abiIBLOXXToken, signer);
 
 const port = process.env.PORT;
 app.listen(
