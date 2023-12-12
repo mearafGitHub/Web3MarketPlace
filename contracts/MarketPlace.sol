@@ -68,19 +68,6 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
     function getAllAuctionNFTs() public view returns (NFTData[] memory){
         return _nftsForAuctionList;
     }
-    
-    // Get one auctioned NFT
-    function getAuctionNFTData(uint256 nftId) public view returns (NFTData memory){
-        NFTData memory tempNftData;
-        if (_nftsForAuctionList.length > 0){
-            for (uint256 i=0; i<=_nftsForAuctionList.length; i++){
-                if (_nftsForAuctionList[i].id == nftId ){
-                    tempNftData = _nftsForAuctionList[i];
-                }
-            }
-        }
-        return tempNftData;
-    }
   
     function createNFT(uint256 price, string memory nftName, bool isForAuction, uint256 auctonEndTime) external onlyRole(MINTER_ROLE) {
 
@@ -136,8 +123,8 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         address payable _owner = payable(_auctionNFT[nftId].owner);
 
         require(msg.sender != _owner, "Unauthorised!");
-        require(getAuctionNFTData(nftId).auctionEnded, "Auction already ended.");
-        require(block.timestamp >= getAuctionNFTData(nftId).auctionEndTime, "It's not ending time yet.");
+        require(_auctionNFT[nftId].auctionEnded, "Auction already ended.");
+        require(block.timestamp >= _auctionNFT[nftId].auctionEndTime, "It's not ending time yet.");
 
         address theHighestBidder = _highestBidder[nftId];
         uint256 theHighestBid = _highestBid[nftId];
@@ -165,8 +152,8 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
 
     function bid(uint256 nftId, uint256 offeredPrice) payable external{
         // Check if started, ended, and price increase
-        require(getAuctionNFTData(nftId).auctionStarted, "Auction has NOT started yet!");
-        require(getAuctionNFTData(nftId).auctionEnded, "Auction has ended!");
+        require(_auctionNFT[nftId].auctionStarted, "Auction has NOT started yet!");
+        require(_auctionNFT[nftId].auctionEnded, "Auction has ended!");
         require( offeredPrice > _highestBid[nftId], "Price offer must be greater than the most recent bid!");
 
         address payable theHighestBidder = payable(_highestBidder[nftId]);
