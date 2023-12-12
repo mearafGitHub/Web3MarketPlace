@@ -1,7 +1,7 @@
 {
-  "name": "assesment-project",
+  "name": "Web3 Marketplace",
   "version": "1.0.0",
-  "description": "NFT Market Place with auction and fixed price token. Project for Bloxx job assesment",
+  "description": "NFT Market Place with auction and fixed price token.",
   "main": "index.js",
   "scripts": {
     "test": "test"
