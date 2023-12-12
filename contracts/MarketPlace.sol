@@ -15,11 +15,8 @@ interface IERC721 {
        address owner;
        uint256 price;
    }
-    
     function transfer(address, uint) external;
     function transferFrom(address, address, uint) external;
-    function getTokenPrice(uint256) external returns (uint256);
-    function setTokenPrice(uint256) external returns (uint256);
     function getTokenData(uint256) external returns (uint256);
     function getTokenOwner(uint256) external returns (address);
     function mintNFT(uint256, string memory, address payable) external returns (uint256);
