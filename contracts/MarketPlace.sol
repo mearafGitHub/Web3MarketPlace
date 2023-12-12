@@ -131,36 +131,36 @@ contract MarketPlace is Initializable, AccessControlUpgradeable, UUPSUpgradeable
         emit AuctionStarted(nftId);  
     }
 
-    function endAuction(uint256 nftId) external{
-        address payable _owner = payable(_auctionNFT[nftId].owner);
+    // function endAuction(uint256 nftId) external{
+    //     address payable _owner = payable(_auctionNFT[nftId].owner);
         
-        require(msg.sender != _owner); // "Unauthorised!"
-        require(_auctionNFT[nftId].auctionEnded); // "Auction already ended."
-        require(block.timestamp >= _auctionNFT[nftId].auctionEndTime); // "It's not ending time yet."
+    //     require(msg.sender != _owner); // "Unauthorised!"
+    //     require(_auctionNFT[nftId].auctionEnded); // "Auction already ended."
+    //     require(block.timestamp >= _auctionNFT[nftId].auctionEndTime); // "It's not ending time yet."
 
-        address theHighestBidder = _highestBidder[nftId];
-        uint256 theHighestBid = _highestBid[nftId];
-        // Sell to winner
-        if(theHighestBidder != address(0)){
-            (bool sent, bytes memory txData) = _owner.call{value: theHighestBid}(
-                abi.encodeWithSignature("")
-            ); 
-            transferFrom(address(this), theHighestBidder, nftId);
-            require(sent, string(txData));
+    //     address theHighestBidder = _highestBidder[nftId];
+    //     uint256 theHighestBid = _highestBid[nftId];
+    //     // Sell to winner
+    //     if(theHighestBidder != address(0)){
+    //         (bool sent, bytes memory txData) = _owner.call{value: theHighestBid}(
+    //             abi.encodeWithSignature("")
+    //         ); 
+    //         transferFrom(address(this), theHighestBidder, nftId);
+    //         require(sent, string(txData));
 
-            // emit WinnerAnnounced(nftId, payable(theHighestBidder), theHighestBid, txData);
-        } else{
-            // Transfer nft back to owner
-            transferFrom(address(this), _owner, nftId);
-        }
-        _allNFTs[nftId].auctionEnded = true;
+    //         // emit WinnerAnnounced(nftId, payable(theHighestBidder), theHighestBid, txData);
+    //     } else{
+    //         // Transfer nft back to owner
+    //         transferFrom(address(this), _owner, nftId);
+    //     }
+    //     _allNFTs[nftId].auctionEnded = true;
 
-        // Remove from list and map
-        delete _nftsForAuctionList[nftId];
-        _nftsForAuctionList.pop();
+    //     // Remove from list and map
+    //     delete _nftsForAuctionList[nftId];
+    //     _nftsForAuctionList.pop();
         
-        // emit AuctionEnded( nftId, theHighestBidder, theHighestBid);
-    }
+    //     // emit AuctionEnded( nftId, theHighestBidder, theHighestBid);
+    // }
 
     function bid(uint256 nftId, uint256 offeredPrice) payable external{
         // Check if started, ended, and price increase

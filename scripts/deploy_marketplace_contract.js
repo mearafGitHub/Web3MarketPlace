@@ -3,7 +3,6 @@ const { ethers, upgrades } = require("hardhat");
 require('dotenv').config();
 
 async function main() { 
-
   // Deploy MarketPlace contract  -> UUPS proxy
   const MarketPlace = await ethers.getContractFactory("MarketPlace"); 
   console.log("\nDeploying MarketPlace Contract..."); 
@@ -13,9 +12,6 @@ async function main() {
     { initializer: 'initialize' }
   ); 
   console.log("\nProxyMarketPlaceContract contract deployed. Details:\n", proxyMarketPlaceContract);
-
-  // Verify MarketPlace Contract:
-  const MarketPlace_contract_address = proxyMarketPlaceContract.target; 
 } 
   
 main() .then(() => process.exit(0)) .catch((error) => { console.error(error); process.exit(1); }); 
