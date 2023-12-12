@@ -1,4 +1,6 @@
-<img width="1470" alt="Screenshot 2023-12-11 at 1 32 07 PM" src="https://github.com/mearafGitHub/Web3MarketPlace/assets/44867763/db9d691d-5537-45e4-a446-c8220ad873f8"># NFT Market Place with Auction and Fixed-price options
+
+
+# NFT Market Place with Auction and Fixed-price options
 
 Web3 App where users can mint and list NFTs for auction or sell for a fixed price.
 
