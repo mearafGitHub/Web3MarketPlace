@@ -15,11 +15,11 @@ const provider = new ethers.providers.JsonRpcProvider(QUICK_NODE_URL);
 const signer = new ethers.Wallet(TEST_ACC_PRIVATE_KEY, provider);
 
 // MarektPlace contract
-const {abi} = require("./artifacts/contracts/MarektPlace.sol/MarektPlace.json");
+const {abiMarektPlace} = require("./artifacts/contracts/MarektPlace.sol/MarektPlace.json");
 const contractInstanceMarektPlace = new ethers.Contract(contractAddress, abi, signer);
 
 // IBLOXXToken contract
-const {abi} = require("./artifacts/contracts/IBLOXXToken.sol/IBLOXXToken.json");
+const {abiIBLOXXToken} = require("./artifacts/contracts/IBLOXXToken.sol/IBLOXXToken.json");
 const contractInstanceIBLOXXToken = new ethers.Contract(contractAddress, abi, signer);
 
 const port = process.env.PORT;
