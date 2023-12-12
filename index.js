@@ -5,24 +5,23 @@ const app = express();
 app.use(express.json());
 require('dotenv').config();
 
-const QUICK_NODE_URL = process.env.QUICK_NODE_URL;
 const TEST_ACC_PRIVATE_KEY = process.env.TEST_ACC_PRIVATE_KEY;
 
-const contractAddressIIBLOXXToken = process.env.MARKET_PLACE_CONTRACT_ADDRESS;
-const contractAddressMarketPlace = process.env.IBLOXX_CONTRACT_ADDRESS;
-
+// Create provider
 const network = "goerli";
-// const provider = new ethers.providers.JsonRpcProvider(QUICK_NODE_URL);
 const provider = new ethers.InfuraProvider(network, process.env.INFURA_API_KEY);
 const signer = new ethers.Wallet(TEST_ACC_PRIVATE_KEY, provider);
 
 // MarketPlace contract
-const {abiMarektPlace} = require("./artifacts/contracts/MarketPlace.sol/MarketPlace.json");
-// Fix: const contractInstanceMarketPlace = new ethers.Contract(contractAddressMarketPlace, abiMarektPlace, signer);
+const ContractAddressMarketPlace = process.env.MARKET_PLACE_CONTRACT_ADDRESS;
+const { abi } = require("./artifacts/contracts/MarketPlace.sol/MarketPlace.json"); 
+const contractInstanceMarketPlace = new ethers.Contract(ContractAddressMarketPlace, abi, signer);
 
-// IBLOXXToken contract
-const {abiIBLOXXToken} = require("./artifacts/contracts/IBLOXXToken.sol/IBLOXXToken.json");
-// Fix: const contractInstanceIBLOXXToken = new ethers.Contract(contractAddressIIBLOXXToken, abiIBLOXXToken, signer);
+// // IBLOXXToken contract
+// const ContractAddressIIBLOXXToken = process.env.IBLOXX_CONTRACT_ADDRESS;
+// const {abi} = require("./artifacts/contracts/IBLOXXToken.sol/IBLOXXToken.json");
+// const contractInstanceIBLOXXToken = new ethers.Contract(ContractAddressIIBLOXXToken, abi, signer);
+
 
 const port = process.env.PORT;
 app.listen(
@@ -30,9 +29,14 @@ app.listen(
     () => console.log(`Server running on http://localhost:${port}`)
 )
 
-app.get("/auctionNfts", function (request, result) {
+app.get("/auctionNfts", async function (request, result) {
     const sample = {}
-    result.status(200).send(sample);
+    try {
+        const nfts = await contractInstanceMarketPlace.getAllAuctionNFTs();
+        result.status(200).send(nfts);
+    } catch (error) {
+        result.console.error(error);
+    }
 });
 
 app.get('/fixedPriceNfts', async function(request, result, next){
